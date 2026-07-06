@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<title>Licitaciones Mercado Público</title>
+<style>
+body{font-family:'Segoe UI',Arial,sans-serif;margin:0;background:#f4f6f8;color:#1a2733}
+header{background:#0d3b66;color:#fff;padding:18px 28px}
+header h1{margin:0;font-size:22px}
+header p{margin:4px 0 0;opacity:.8;font-size:13px}
+.perfil{margin:22px 28px}
+.perfil h2{font-size:18px;color:#0d3b66;border-bottom:2px solid #0d3b66;padding-bottom:6px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.card{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.1);
+      border-left:6px solid #999;display:flex;flex-direction:column;gap:6px;position:relative}
+.card.urgente{border-left-color:#d62828}
+.card.pronto{border-left-color:#f77f00}
+.card.holgado{border-left-color:#2a9d8f}
+.card.marcada-interesa{outline:3px solid #ffd700;background:#fffdf2}
+.card.marcada-descartada{opacity:.3}
+.card h3{margin:0;font-size:14px;line-height:1.35;padding-right:8px}
+.card h3 a{color:#0d3b66;text-decoration:none}
+.card h3 a:hover{text-decoration:underline}
+.meta{font-size:12px;color:#4a5a68}
+.badges{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;background:#e3e9ef;color:#33475b}
+.badge.dias-urgente{background:#d62828;color:#fff}
+.badge.dias-pronto{background:#f77f00;color:#fff}
+.badge.dias-holgado{background:#2a9d8f;color:#fff}
+.badge.monto{background:#0d3b66;color:#fff}
+.badge.estado{background:#ffd166;color:#5c4400}
+.badge.nueva{background:#ffd700;color:#4a3800;border:1px solid #c9a800}
+.badge.score{background:#6a4c93;color:#fff}
+.equipo{font-size:11px;color:#8a4a00;background:#fff3e6;border-radius:6px;padding:4px 8px}
+.desc{font-size:12px;color:#5c6b78;max-height:52px;overflow:hidden}
+.acciones{display:flex;gap:6px;margin-top:2px}
+.acciones button{font-size:11px;padding:3px 10px;border-radius:8px;border:1px solid #cdd7e0;
+                 background:#fff;cursor:pointer}
+.acciones button:hover{background:#e8eef4}
+.filtro{margin:14px 28px 0;background:#fff;border-radius:8px;padding:10px 14px;font-size:13px;
+        display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.filtro select{font-size:13px;padding:4px 8px;border-radius:6px;border:1px solid #cdd7e0}
+.filtro button{font-size:12px;padding:5px 12px;border-radius:8px;border:1px solid #0d3b66;
+               background:#0d3b66;color:#fff;cursor:pointer}
+.leyenda{margin:10px 28px 0;font-size:12px;color:#4a5a68;background:#fff;border-radius:8px;padding:10px 14px}
+table.plana{border-collapse:collapse;width:100%;margin:8px 0;background:#fff;font-size:12px}
+table.plana th{background:#0d3b66;color:#fff;padding:5px 8px;text-align:left}
+table.plana td{border:1px solid #cdd7e0;padding:5px 8px;vertical-align:top}
+table.plana tr:nth-child(even) td{background:#f4f7fa}
+footer{margin:20px 28px;font-size:11px;color:#8a97a3}
+</style></head><body>
+<header style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+<div><h1>FRIOMETAL SpA — Panel de Licitaciones</h1>
+<p>Actualizado el 06-07-2026 ·
+rojo = cierra en ≤3 días, naranjo = ≤8 días, verde = más plazo ·
+usa ★ Interesa / ✖ Descartar en cada tarjeta: las marcas se guardan en este navegador
+y con "Exportar marcas" pasan al Excel en la próxima búsqueda (guarda el archivo como
+<b>ofertas\marcas.json</b> dentro del proyecto)</p></div>
+<img src="data:image/png;base64,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" alt="logo" style="height:64px;background:#fff;border-radius:8px;padding:6px 10px"></header>
+
+<div class="filtro">
+<b>Perfil:</b> <select id="selPerfil" onchange="aplicarFiltros()">
+<option value="todos">Todos</option><option value="Ropa Industrial">Ropa Industrial</option><option value="Refrigeracion Industrial">Refrigeracion Industrial</option></select>
+<b>Región:</b> <select id="selRegion" onchange="aplicarFiltros()">
+<option value="todas">Todas (90)</option><option value="Región Aysén del General Carlos Ibáñez del Campo">Región Aysén del General Carlos Ibáñez del Campo (2)</option><option value="Región Metropolitana de Santiago">Región Metropolitana de Santiago (31)</option><option value="Región de Antofagasta">Región de Antofagasta (1)</option><option value="Región de Arica y Parinacota">Región de Arica y Parinacota (3)</option><option value="Región de Atacama">Región de Atacama (1)</option><option value="Región de Coquimbo">Región de Coquimbo (5)</option><option value="Región de Los Ríos">Región de Los Ríos (1)</option><option value="Región de Magallanes y de la Antártica">Región de Magallanes y de la Antártica (5)</option><option value="Región de Tarapacá">Región de Tarapacá (1)</option><option value="Región de Valparaíso">Región de Valparaíso (14)</option><option value="Región de la Araucanía">Región de la Araucanía (3)</option><option value="Región de los Lagos">Región de los Lagos (4)</option><option value="Región del Biobío">Región del Biobío (9)</option><option value="Región del Libertador General Bernardo O´Higgins">Región del Libertador General Bernardo O´Higgins (2)</option><option value="Región del Maule">Región del Maule (5)</option><option value="Región del Ñuble">Región del Ñuble (3)</option></select>
+<b>Ver:</b> <select id="selVer" onchange="aplicarFiltros()">
+<option value="sindesc">Sin descartadas</option>
+<option value="todas">Todas</option>
+<option value="interesa">Solo ★ Interesa</option></select>
+<b>Ordenar:</b> <select id="selOrden" onchange="ordenar()">
+<option value="cierre">Por fecha de cierre</option>
+<option value="puntaje">Por puntaje de calce</option></select>
+<button onclick="exportarMarcas()">💾 Exportar marcas al buscador</button>
+<span id="resumenFiltro" style="color:#4a5a68"></span>
+</div>
+<div class="leyenda"><b>Tipos:</b> L1 &lt;100 UTM (~$7M, la más accesible) ·
+LE 100–1.000 UTM · LP 1.000–2.000 UTM · LR &gt;5.000 UTM (contrato grande) · O1/O2 obras públicas.
+<b>Puntaje de calce</b> (morado): 0–100 según plazo, tipo, monto ideal y región preferida
+(configurable en config.json); resta si detecta equipo adicional (línea naranja ⚠).
+Haz clic en el título para abrir la ficha oficial y descargar las bases.</div>
+<div class="perfil seccion-lic" data-perfil="Ropa Industrial"><h2>Ropa Industrial — 62 licitaciones <span style="color:#c9a800">(★ 62 nuevas hoy)</span></h2><div class="cards">
+    <div class="card urgente" data-region="Región de Coquimbo" data-codigo="1657-11-LE26"
+         data-cierre="2026-07-06 15:00" data-score="30" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1657-11-LE26" target="_blank">SERVICIO DE ADQUISICIÓN DE UNIFORMES INSTITUCIONALES PARA FUNCIONARIOS DE LA SEREMI DE SALUD REGIÓN DE COQUIMBO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">30 pts</span></div>
+      <div class="meta">SUBSECRETARIA DE SALUD PUBLICA · Reg. de Coquimbo · cierre 2026-07-06 15:00</div>
+      
+      <div class="desc">La Seremi de Salud de la Región de Coquimbo, requiere contratar los servicios de adquisición de prendas de vestir que califiquen dentro de la categoría de uniforme institucional para las funcionarias y funcionarios de la Seremi de Salud que cuenten con los req</div>
+      <div class="acciones">
+        <button onclick="setMarca('1657-11-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1657-11-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1657-11-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región del Biobío" data-codigo="2656-43-LE26"
+         data-cierre="2026-07-06 15:01" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2656-43-LE26" target="_blank">ADQUISICION DE CALZADO DE SEGURIDAD</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$9.500.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE TOME · Reg. del Biobío · cierre 2026-07-06 15:01</div>
+      
+      <div class="desc">ADQUISICION DE CALZADO DE SEGURIDAD</div>
+      <div class="acciones">
+        <button onclick="setMarca('2656-43-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2656-43-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2656-43-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región del Biobío" data-codigo="998-31-LE26"
+         data-cierre="2026-07-06 15:01" data-score="30" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=998-31-LE26" target="_blank">ADQUISICIÓN DE ELEMENTOS DE PROTECCIÓN AUDITIVA</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">30 pts</span></div>
+      <div class="meta">MINISTERIO DE OBRAS PUBLICAS DIREC CION GRAL DE OO PP DCYF · Reg. del Biobío · cierre 2026-07-06 15:01</div>
+      
+      <div class="desc">La Dirección de Vialidad, Región del Biobío requiere elementos de protección auditiva para funcionarios que ejecutan labores en el Departamento de Conservación por administración directa.</div>
+      <div class="acciones">
+        <button onclick="setMarca('998-31-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('998-31-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('998-31-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región Metropolitana de Santiago" data-codigo="3436-68-L126"
+         data-cierre="2026-07-06 15:05" data-score="65" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=3436-68-L126" target="_blank">Adquisición de cascos de formación para los alumnos de la Escuela de Suboficiales SIC CC 1100065012</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="&lt; 100 UTM (~$7M) — la más simple de postular">L1</span><span class="badge monto">$5.818.540 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">65 pts</span></div>
+      <div class="meta">DIVISION LOGISTICA DEL EJERCITO · Reg. Metropolitana de Santiago · cierre 2026-07-06 15:05</div>
+      
+      <div class="desc">Adquisición de cascos de formación para los alumnos de la Escuela de Suboficiales. CC 1100065012 / SIC 348016</div>
+      <div class="acciones">
+        <button onclick="setMarca('3436-68-L126','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('3436-68-L126','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('3436-68-L126',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región Metropolitana de Santiago" data-codigo="2432-14-LE26"
+         data-cierre="2026-07-06 15:08" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2432-14-LE26" target="_blank">ADQUISICIÓN DE VESTUARIO PARA PERSONAL DE LA DAO”</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD ESTACION CENTRAL · Reg. Metropolitana de Santiago · cierre 2026-07-06 15:08</div>
+      
+      <div class="desc">En el cumplimiento de su misión, el municipio cuenta con diversos equipos que desarrollan en terreno labores tales como la mantención de árboles en la vía pública, mantención de plazas y parques, asistencia en situaciones de emergencia, seguridad, inspección, </div>
+      <div class="acciones">
+        <button onclick="setMarca('2432-14-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2432-14-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2432-14-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región del Libertador General Bernardo O´Higgins" data-codigo="3730-69-L126"
+         data-cierre="2026-07-06 15:10" data-score="65" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=3730-69-L126" target="_blank">ADQUISICION DE CALZADOS DE SEGURIDAD</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="&lt; 100 UTM (~$7M) — la más simple de postular">L1</span><span class="badge monto">$1.650.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">65 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE CHIMBARONGO · Reg. del Libertador General Bernardo O´Higgins · cierre 2026-07-06 15:10</div>
+      
+      <div class="desc">SE REQUIERE LA ADQUISICION DE CALZADOS DE SEGURIDAD PARA PERSONAL DE LA DIRECCION DE OPERACIONES, SEGUN ESPECIFICACIONES TECNICAS ADJUNTAS A REVISAR Y CUMPLIR EN ANEXO ADJUNTO PRESUPUESTO DISPONIBLE DE 1650000 CON IVA INCLUIDO PARA LAS 3 LINEAS</div>
+      <div class="acciones">
+        <button onclick="setMarca('3730-69-L126','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('3730-69-L126','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('3730-69-L126',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de Coquimbo" data-codigo="2450-66-LE26"
+         data-cierre="2026-07-06 15:30" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2450-66-LE26" target="_blank">ADQUISICIÓN DE ROPA DE TRABAJO ELEMENTOS DE PROTECCIÓN PERSONAL E IMPLEMENTACIÓN PARA PROGRAMA EMPLEABILIDAD AÑO 2026</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$18.160.252 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">ILUSTRE MUNICIPALIDAD DE LA SERENA · Reg. de Coquimbo · cierre 2026-07-06 15:30</div>
+      
+      <div class="desc">ADQUISICION ROPA DE TRABAJO,  ELEMENTOS DE PROTECCION PERSONAL E IMPLEMENTACIÓN PARA TRABAJADORES OPERARIOS DEL PROGRAMA DE EMPLEABILIDAD QUE REALIZAN LABORES EN TERRENO DISTRIBUIDOS EN LAS DISTINTAS DEPENDENCIAS MUNICIPALES.</div>
+      <div class="acciones">
+        <button onclick="setMarca('2450-66-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2450-66-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2450-66-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de Valparaíso" data-codigo="2799-20-LP26"
+         data-cierre="2026-07-06 15:30" data-score="35" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2799-20-LP26" target="_blank">CS Uniformes y Vestuario Personal Municipal</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge monto">$150.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">35 pts</span></div>
+      <div class="meta">MUNICIPALIDAD DE LOS ANDES · Reg. de Valparaíso · cierre 2026-07-06 15:30</div>
+      
+      <div class="desc">Se requiere contar con un contrato de suministro anual para la adquisición de uniformes y vestuario para personal municipal  por periodo de 36 meses.</div>
+      <div class="acciones">
+        <button onclick="setMarca('2799-20-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2799-20-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2799-20-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región Metropolitana de Santiago" data-codigo="3173-20-LE26"
+         data-cierre="2026-07-06 15:30" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=3173-20-LE26" target="_blank">ADQ. CASCOS PARA MOTORISTAS</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">DIRECCION DE LOGISTICA DE CARABINEROS · Reg. Metropolitana de Santiago · cierre 2026-07-06 15:30</div>
+      
+      <div class="desc">NECESIDAD DE MATERIALIZAR LA ADQUISICIÓN DE CASCOS ABATIBLES PARA MOTORISTAS DE CARABINEROS DE CHILE, CON LA FINALIDAD QUE EL PERSONAL DE LA INSTITUCIÓN CUENTE CON LOS MEDIOS NECESARIOS PARA DESARROLLAR  SUS FUNCIONES POLICIALES.</div>
+      <div class="acciones">
+        <button onclick="setMarca('3173-20-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('3173-20-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('3173-20-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de Valparaíso" data-codigo="3132-23-LE26"
+         data-cierre="2026-07-06 16:00" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=3132-23-LE26" target="_blank">ADQUISICIÓN DE VESTUARIO PARA POLMAR</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$64.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">DIRECCION DE ABASTECIMIENTO DE LA ARMADA · Reg. de Valparaíso · cierre 2026-07-06 16:00</div>
+      
+      <div class="desc">ADQUISICIÓN DE VESTUARIO PARA PERSONAL QUE CUMPLE FUNCIONES DE POLICÍA MARÍTIMA.</div>
+      <div class="acciones">
+        <button onclick="setMarca('3132-23-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('3132-23-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('3132-23-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región del Ñuble" data-codigo="1059109-11-LE26"
+         data-cierre="2026-07-06 17:00" data-score="30" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1059109-11-LE26" target="_blank">VESTUARIO DE PRESENTACIÓN Y COMPETENCIA - SNCD</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">30 pts</span></div>
+      <div class="meta">INSTITUTO NACIONAL DE DEPORTES DE CHILE · Reg. del Ñuble · cierre 2026-07-06 17:00</div>
+      
+      <div class="desc">ADQUIRIR VESTUARIO DE PRESENTACIÓN Y COMPETENCIA FINAL NACIONAL U 14 Y JUVENIL - COMPONENTES ESCOLAR JUEGOS BINACIONALES ARAUCANÍA Y PARA ARAUCANÍA</div>
+      <div class="acciones">
+        <button onclick="setMarca('1059109-11-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1059109-11-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1059109-11-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región Metropolitana de Santiago" data-codigo="564953-49-LE26"
+         data-cierre="2026-07-06 17:59" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=564953-49-LE26" target="_blank">ADQUISICIÓN DE VESTUARIO PARA FUNCIONARIOS</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$28.100.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">Corporación de Educación y Salud de Las Condes · Reg. Metropolitana de Santiago · cierre 2026-07-06 17:59</div>
+      
+      <div class="desc">El objetivo es la compra de vestuario para los funcionarios de los establecimientos educacionales de la Corporación de Educación y Salud de Las Condes.</div>
+      <div class="acciones">
+        <button onclick="setMarca('564953-49-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('564953-49-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('564953-49-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de Magallanes y de la Antártica" data-codigo="2348-25-LE26"
+         data-cierre="2026-07-07 10:00" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2348-25-LE26" target="_blank">ADQUISICIÓN  DE ELEMENTOS DE SEGURIDAD – VESTUARIO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 1 día</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$20.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE PUNTA ARENAS · Reg. de Magallanes y de la Antártica · cierre 2026-07-07 10:00</div>
+      
+      <div class="desc">ADQUISICIÓN  DE ELEMENTOS DE SEGURIDAD – VESTUARIO  PARA LOSAS FUNCIONARIOSAS DE TERRENO. 23 LINEAS A OFERTAR SEGÚN DETALLE TÉCNICO ADJUNTO. REVISAR ANTECEDENTES Y BASES ADMINISTRATIVAS ANTES DE OFERTAR.</div>
+      <div class="acciones">
+        <button onclick="setMarca('2348-25-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2348-25-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2348-25-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de Magallanes y de la Antártica" data-codigo="2363-8-LE26"
+         data-cierre="2026-07-07 11:00" data-score="30" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2363-8-LE26" target="_blank">CONTRATO DE SUMINISTRO de EPP</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 1 día</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">30 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE PUNTA ARENAS · Reg. de Magallanes y de la Antártica · cierre 2026-07-07 11:00</div>
+      
+      <div class="desc">Adquisición de elementos de protección  e implementos de seguridad. Uniformes y calzados para el personal del Cementerio Municipal Sara Braun.</div>
+      <div class="acciones">
+        <button onclick="setMarca('2363-8-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2363-8-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2363-8-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de Antofagasta" data-codigo="3506-57-LE26"
+         data-cierre="2026-07-07 12:00" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=3506-57-LE26" target="_blank">ADQUISICION DE INDUMENTARIA PERSONAL PARA USO DIARIO MUNICIPALIDAD DE TOCOPILLA</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 1 día</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$10.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE TOCOPILLA · Reg. de Antofagasta · cierre 2026-07-07 12:00</div>
+      
+      <div class="desc">Se requiere la ADQUISICIÓN DE INDUMENTARIA PERSONAL, PARA USO DIARIO MUNICIPALIDAD DE TOCOPILLA. Este servicio debe considerar todo los especificado en las Bases Administrativas</div>
+      <div class="acciones">
+        <button onclick="setMarca('3506-57-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('3506-57-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('3506-57-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región Metropolitana de Santiago" data-codigo="867990-39-LP26"
+         data-cierre="2026-07-07 15:00" data-score="35" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=867990-39-LP26" target="_blank">SERVICIO DE PROVISIÓN DE UNIFORMES INSTITUCIONALES</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 1 día</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge monto">$126.792.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">35 pts</span></div>
+      <div class="meta">UNIVERSIDAD DE SANTIAGO DE CHILE · Reg. Metropolitana de Santiago · cierre 2026-07-07 15:00</div>
+      
+      <div class="desc">El objeto de la presente licitación es la contratación del servicio de confección, provisión y entrega de uniformes institucionales para funcionarias y funcionarios del estamento administrativo de la Universidad de Santiago de Chile, período 2026-2027, con el </div>
+      <div class="acciones">
+        <button onclick="setMarca('867990-39-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('867990-39-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('867990-39-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de Valparaíso" data-codigo="2424-42-LE26"
+         data-cierre="2026-07-07 15:30" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2424-42-LE26" target="_blank">VESTUARIO OPERATIVO INSTITUCIONAL - 71 - 72 - 73 - 76 - 1904-1905-1919-1985 - P.M.R.</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 1 día</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$34.425.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE VINA DEL MAR · Reg. de Valparaíso · cierre 2026-07-07 15:30</div>
+      
+      <div class="desc">Ped. N° 71 - 72 - 73 - 76 - (1904-1905-1919-1985) - Departamento de Personal - Sección Prevención de Riesgos - (p.m.r.)</div>
+      <div class="acciones">
+        <button onclick="setMarca('2424-42-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2424-42-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2424-42-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región del Ñuble" data-codigo="1057509-172-LE26"
+         data-cierre="2026-07-07 16:00" data-score="30" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1057509-172-LE26" target="_blank">“ADQUISICIÓN DE ELEMENTOS DE PROTECCIÓN PERSONAL PARA BRIGADA DE EMERGENCIA” gbv</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 1 día</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">30 pts</span></div>
+      <div class="meta">HOSPITAL CLINICO HERMINDA MARTIN · Reg. del Ñuble · cierre 2026-07-07 16:00</div>
+      
+      <div class="desc">El Hospital Clínico Herminda Martín de Chillán llama a Licitación Pública a través del Portal Mercado Público, para la adquisición de elementos de protección personal destinado a la Brigada de Emergencias del HCHM, de acuerdo con los requerimientos especificad</div>
+      <div class="acciones">
+        <button onclick="setMarca('1057509-172-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1057509-172-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1057509-172-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región del Maule" data-codigo="434-79-LE26"
+         data-cierre="2026-07-07 16:00" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=434-79-LE26" target="_blank">CONTRATO SUMINISTRO VESTUARIO FORMULARIO N 43 DIDECO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 1 día</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$20.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE CAUQUENES · Reg. del Maule · cierre 2026-07-07 16:00</div>
+      
+      <div class="desc">CONTRATO DE SUMINISTRO VESTUARIO NECESARIO PARA PERSONAS AFECTADAS POR INCENDIOS ESTRUCTURALES, INUNDACIONES, TERREMOTOS Y/O ALGUNA OTRA CATASTROFES NATURALES, SEGUN FORMULARIO N 43 DE DIDECO. FLETE INCLUIDO Y PUESTO EN BODEGA MUNICIPAL</div>
+      <div class="acciones">
+        <button onclick="setMarca('434-79-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('434-79-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('434-79-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región Metropolitana de Santiago" data-codigo="634-44-LP26"
+         data-cierre="2026-07-07 16:30" data-score="50" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=634-44-LP26" target="_blank">CASCOS ANTIDISTURBIOS</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 1 día</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge monto">$74.400.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">50 pts</span></div>
+      <div class="meta">DIRECCION GENERAL DE GENDARMERIA DE CHIL · Reg. Metropolitana de Santiago · cierre 2026-07-07 16:30</div>
+      
+      <div class="desc">DISPONE LLAMADO A LICITACIÓN PÚBLICA Y APRUEBA BASES ADMINISTRATIVAS, TÉCNICAS Y FORMULARIOS CORRESPONDIENTES, PARA LA ADQUISICIÓN DE 120 CASCOS ANTIDISTURBIOS PARA EL DEPARTAMENTO DE SEGURIDAD PENITENCIARIA DE GENDARMERÍA DE CHILE.  E1O2RT9</div>
+      <div class="acciones">
+        <button onclick="setMarca('634-44-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('634-44-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('634-44-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de Coquimbo" data-codigo="2288-25-LE26"
+         data-cierre="2026-07-07 16:56" data-score="30" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2288-25-LE26" target="_blank">ADQ. DE INDUMENTARIA HERRAMIENTAS Y ÚTILES VARIOS PROGRAMA EMPLEABILIDAD LINEAS DE INTERVENCIÓN AÑO 2026</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 1 día</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">30 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE CANELA · Reg. de Coquimbo · cierre 2026-07-07 16:56</div>
+      
+      <div class="desc">ADQ. DE INDUMENTARIA HERRAMIENTAS Y ÚTILES VARIOS PROGRAMA EMPLEABILIDAD LINEAS DE INTERVENCIÓN AÑO 2026</div>
+      <div class="acciones">
+        <button onclick="setMarca('2288-25-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2288-25-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2288-25-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región Metropolitana de Santiago" data-codigo="5251-44-CO26"
+         data-cierre="2026-07-07 20:00" data-score="52" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=5251-44-CO26" target="_blank">UNIFORMES DE INVIERNO PERSONAL PORTERÍA</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 1 día</span><span class="badge" title="">CO</span><span class="badge monto">$30.360.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">52 pts</span></div>
+      <div class="meta">UNIVERSIDAD TECNOLOGICA METROPOLITANA · Reg. Metropolitana de Santiago · cierre 2026-07-07 20:00</div>
+      
+      <div class="desc">Las presentes bases tienen por objeto regular el proceso de licitación pública destinado a la adquisición de uniformes de Invierno correspondientes al período 2026-2027, destinados a los funcionarios de portería de las distintas sedes de la Universidad Tecnoló</div>
+      <div class="acciones">
+        <button onclick="setMarca('5251-44-CO26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('5251-44-CO26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('5251-44-CO26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región Metropolitana de Santiago" data-codigo="1211839-40-LP26"
+         data-cierre="2026-07-09 11:00" data-score="38" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1211839-40-LP26" target="_blank">ADQ. UNIFORMES CORPORATIVOS OTOÑO INVIERNO 2026</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 3 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge monto">$333.236.362 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">38 pts</span></div>
+      <div class="meta">CORP MUNIC EDUC SALUD Y ATENCION · Reg. Metropolitana de Santiago · cierre 2026-07-09 11:00</div>
+      
+      <div class="desc">La presente licitación pública tiene por objeto el suministro de Uniformes Corporativos, a favor de los funcionariosas que reciben uniformes clínicos, personal de ambulancia, administrativas de todas las áreas y administradores de área salud.</div>
+      <div class="acciones">
+        <button onclick="setMarca('1211839-40-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1211839-40-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1211839-40-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región Aysén del General Carlos Ibáñez del Campo" data-codigo="707426-18-LE26"
+         data-cierre="2026-07-09 15:00" data-score="53" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=707426-18-LE26" target="_blank">Adq.de uniformes para el personal de jardines</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 3 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$21.298.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">53 pts</span></div>
+      <div class="meta">FUNDACION EDUCACIONAL PARA EL DESAROLLO INTEGRAL DE LA NIÑEZ · Reg. Aysén del General Carlos Ibáñez del Campo · cierre 2026-07-09 15:00</div>
+      
+      <div class="desc">Fundación Integra requiere la adquisición de uniformes para el personal de jardines infantiles y salas cuna de la Región de Aysén, de conformidad con lo señalado en las presentes Bases Administrativas Especiales, Bases Administrativas Generales, Bases Técnicas</div>
+      <div class="acciones">
+        <button onclick="setMarca('707426-18-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('707426-18-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('707426-18-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región Metropolitana de Santiago" data-codigo="634-43-LP26"
+         data-cierre="2026-07-09 15:30" data-score="43" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=634-43-LP26" target="_blank">VESTUARIO PARA PERSONAL UNIFORMADO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 3 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">43 pts</span></div>
+      <div class="meta">DIRECCION GENERAL DE GENDARMERIA DE CHIL · Reg. Metropolitana de Santiago · cierre 2026-07-09 15:30</div>
+      
+      <div class="desc">DISPONE LLAMADO A LICITACIÓN PÚBLICA Y APRUEBA BASES ADMINISTRATIVAS, TÉCNICAS Y FORMULARIOS DESTINADOS A LA ADQUISICIÓN, POR LÍNEAS, DE “VESTUARIO PARA PERSONAL UNIFORMADO  E1O2RT9</div>
+      <div class="acciones">
+        <button onclick="setMarca('634-43-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('634-43-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('634-43-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de Arica y Parinacota" data-codigo="1110404-98-LE26"
+         data-cierre="2026-07-09 16:00" data-score="38" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1110404-98-LE26" target="_blank">ADQUISICIÓN DE UNIFORME PARA LA ESPECIALIDAD DE PÁRVULOS Y GASTRONOMIA DEL LICEO POLITECNICO A TRAVES DE SUBVENCIÓN SEP</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 3 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">38 pts</span></div>
+      <div class="meta">SERVICIO LOCAL DE EDUCACION DE CHINCHORRO · Reg. de Arica y Parinacota · cierre 2026-07-09 16:00</div>
+      
+      <div class="desc">Solicitud de Compra N°0081 Liceo Politécnico</div>
+      <div class="acciones">
+        <button onclick="setMarca('1110404-98-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1110404-98-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1110404-98-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región Metropolitana de Santiago" data-codigo="539119-68-LE26"
+         data-cierre="2026-07-09 17:00" data-score="68" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=539119-68-LE26" target="_blank">SUMINISTRO DE ELEMENTOS DE PROTECCIÓN PERSONAL PARA LA REPARACIÓN DE LAS FACHADAS DEL CONJUNTO HABITACIONAL PAJARITOS ADMINISTRADO POR EL DEPARTAMENTO GESTIÓN DE VIVIENDAS Y POBLACIONES B.4 DE LA DIRECCIÓN DE BIENESTAR DE CARABINEROS.</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 3 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$15.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">68 pts</span></div>
+      <div class="meta">DIRECCION DE LOGISTICA DE CARABINEROS · Reg. Metropolitana de Santiago · cierre 2026-07-09 17:00</div>
+      
+      <div class="desc">SUMINISTRO DE ELEMENTOS DE PROTECCIÓN PERSONAL PARA LA REPARACIÓN DE LAS FACHADAS DEL CONJUNTO HABITACIONAL PAJARITOS, ADMINISTRADO POR EL DEPARTAMENTO GESTIÓN DE VIVIENDAS Y POBLACIONES (B.4) DE LA DIRECCIÓN DE BIENESTAR DE CARABINEROS.</div>
+      <div class="acciones">
+        <button onclick="setMarca('539119-68-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('539119-68-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('539119-68-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región Metropolitana de Santiago" data-codigo="2378-85-LE26"
+         data-cierre="2026-07-10 12:00" data-score="68" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2378-85-LE26" target="_blank">ADQUISICIÓN DE ELEMENTOS DE PROTECCIÓN PERSONAL</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 4 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$13.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">68 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE LA FLORIDA · Reg. Metropolitana de Santiago · cierre 2026-07-10 12:00</div>
+      
+      <div class="desc">En el contexto del Sistema de Gestión de Seguridad y Salud Ocupacional de la Municipalidad de la Florida, dónde se indica como estrategia de control de riesgo el proporcionar los elementos de protección personal a todos sus funcionarios y colaboradores como la</div>
+      <div class="acciones">
+        <button onclick="setMarca('2378-85-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2378-85-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2378-85-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región Metropolitana de Santiago" data-codigo="2460-77-LE26"
+         data-cierre="2026-07-10 12:00" data-score="68" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2460-77-LE26" target="_blank">Adquisición de elementos de protección personal</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 4 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$17.440.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">68 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE PROVIDENCIA · Reg. Metropolitana de Santiago · cierre 2026-07-10 12:00</div>
+      
+      <div class="desc">Para ser utilizado por funcionarios durante el ejercicio de sus funciones</div>
+      <div class="acciones">
+        <button onclick="setMarca('2460-77-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2460-77-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2460-77-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región del Biobío" data-codigo="4238-46-LE26"
+         data-cierre="2026-07-10 12:00" data-score="38" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=4238-46-LE26" target="_blank">ELEMENTOS DE PROTECCION PERSONAL EPP DEPTO. SALUD</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 4 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">38 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE CURANILAHUE · Reg. del Biobío · cierre 2026-07-10 12:00</div>
+      
+      <div class="desc">AQUISICION DE "ELEMENTOS DE PROTECCION PERSONAL (EPP) DE RESPUESTA CRITICA" PARA LA MUNICIPALIDAD DE CURANILAHUE/DEPARTAMENTO DE SALUD Y ESTABLECIMIENTOS DEPENDIENTES, DE ACUERDO A ORD. (DAS) N°860 Y DECRETO N°7.126/2026</div>
+      <div class="acciones">
+        <button onclick="setMarca('4238-46-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('4238-46-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('4238-46-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región Metropolitana de Santiago" data-codigo="2770-75-LR26"
+         data-cierre="2026-07-10 14:00" data-score="33" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2770-75-LR26" target="_blank">SUMINISTRO DE VESTUARIO DE TRABAJO CALZADO Y ELEMENTOS DE PROTECCIÓN PARA EL PERSONAL MUNICIPAL QUE SE DESEMPEÑA EN TERRENO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 4 días</span><span class="badge" title="&gt; 5.000 UTM — contrato grande">LR</span><span class="badge monto">$502.114.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">33 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE MAIPU · Reg. Metropolitana de Santiago · cierre 2026-07-10 14:00</div>
+      
+      <div class="desc">La presente Licitación tiene objeto contratar el suministro de vestuario de trabajo, calzado y elementos de protección destinados al personal municipal que, por la naturaleza de sus funciones, requiera dichos productos para el adecuado desempeño de sus labores</div>
+      <div class="acciones">
+        <button onclick="setMarca('2770-75-LR26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2770-75-LR26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2770-75-LR26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región Metropolitana de Santiago" data-codigo="4956-54-LE26"
+         data-cierre="2026-07-10 15:01" data-score="68" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=4956-54-LE26" target="_blank">VESTUARIO DE INVIERNO EQUIPO DE SEGURIDAD PÚBLICA</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 4 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$15.810.340 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">68 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE RENCA · Reg. Metropolitana de Santiago · cierre 2026-07-10 15:01</div>
+      
+      <div class="desc">Proveer vestuario adecuado para los funcionarios inspectores de la Dirección de Seguridad Pública que desarrollan labores rutinarias en terreno y en la vía pública, con la finalidad de resguardar su protección frente a las condiciones climáticas adversas propi</div>
+      <div class="acciones">
+        <button onclick="setMarca('4956-54-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('4956-54-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('4956-54-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región de Valparaíso" data-codigo="1422825-20-LP26"
+         data-cierre="2026-07-10 16:00" data-score="43" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1422825-20-LP26" target="_blank">“CONTRATO DE SUMINISTRO DE VESTUARIO DE SEGURIDAD PARA EL PERSONAL DEL SAMU DEL HOSPITAL CARLOS VAN BUREN”</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 4 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">43 pts</span></div>
+      <div class="meta">SERVICIO NACIONAL DE SALUD HOSPITAL CARLOS VAN BUREN · Reg. de Valparaíso · cierre 2026-07-10 16:00</div>
+      
+      <div class="desc">Las presentes Bases Administrativas tienen por objeto regular el llamado a Propuesta Pública para contratar un suministro de vestuario de seguridad para el personal del SAMU del centro hospitalario, lo que se singulariza en las Bases Administrativas y en las B</div>
+      <div class="acciones">
+        <button onclick="setMarca('1422825-20-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1422825-20-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1422825-20-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región del Biobío" data-codigo="1057419-18-LE26"
+         data-cierre="2026-07-13 15:00" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1057419-18-LE26" target="_blank">UNIFORMES PARA PERSONAL DE AMBULANCIA             </a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 7 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$7.476.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">SERVICIO DE SALUD BIO BIO HOSPITAL SANTA BARBARA · Reg. del Biobío · cierre 2026-07-13 15:00</div>
+      
+      <div class="desc">La presente licitación tiene por objeto la adquisición de uniformes para el personal de ambulancias del Hospital de Santa Bárbara, con la finalidad de proporcionar vestuario institucional adecuado para el desempeño de sus funciones, asegurando condiciones de i</div>
+      <div class="acciones">
+        <button onclick="setMarca('1057419-18-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1057419-18-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1057419-18-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región Metropolitana de Santiago" data-codigo="1233666-4-CO26"
+         data-cierre="2026-07-13 15:00" data-score="52" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1233666-4-CO26" target="_blank">Uniformes de invierno Unidad Estaciona Recoleta</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 7 días</span><span class="badge" title="">CO</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">52 pts</span></div>
+      <div class="meta">Corporación Municipal de Innovación y Desarrollo Económico y Social de Recoleta · Reg. Metropolitana de Santiago · cierre 2026-07-13 15:00</div>
+      
+      <div class="desc">Adquisición de Uniformes de invierno Unidad Estaciona Recoleta</div>
+      <div class="acciones">
+        <button onclick="setMarca('1233666-4-CO26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1233666-4-CO26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1233666-4-CO26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región del Maule" data-codigo="4473-16-LE26"
+         data-cierre="2026-07-13 15:00" data-score="75" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=4473-16-LE26" target="_blank">INDUMENTARIA PERSONAL EQUIPO DE SEGURIDAD</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 7 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$15.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">75 pts</span></div>
+      <div class="meta">I.MUNICIPALIDAD DE ROMERAL · Reg. del Maule · cierre 2026-07-13 15:00</div>
+      
+      <div class="desc">INDUMENTARIA PERSONAL EQUIPO DE SEGURIDAD, COMUNA DE ROMERAL, DE CONFORMIDAD A LO INDICADO EN BASES ADMINISTRATIVAS Y TÉCNICAS, APROBADAS POR DECRETO EXENTO N 1559</div>
+      <div class="acciones">
+        <button onclick="setMarca('4473-16-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('4473-16-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('4473-16-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región de Valparaíso" data-codigo="4967-24-LP26"
+         data-cierre="2026-07-13 15:00" data-score="50" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=4967-24-LP26" target="_blank">CONVENIO DE SUMINISTRO DE ADQUISICIÓN DE GUANTES</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 7 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">50 pts</span></div>
+      <div class="meta">HOSPITAL DE QUILPUE · Reg. de Valparaíso · cierre 2026-07-13 15:00</div>
+      
+      <div class="desc">1.	Que, el Hospital de Quilpué requiere proceder con la suscripción de convenio para la “ADQUISICIÓN DE GUANTES” de conformidad al requerimiento contenido en el Plan Anual de Compras del año 2026 de las diferentes Unidades Clínicas del Establecimiento.</div>
+      <div class="acciones">
+        <button onclick="setMarca('4967-24-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('4967-24-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('4967-24-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región Metropolitana de Santiago" data-codigo="1057476-30-LE26"
+         data-cierre="2026-07-13 15:01" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1057476-30-LE26" target="_blank">SERVICIO DE CONFECCIÓN DE UNIFORMES ADMINISTRATIVOS TEMPORADA INVIERNO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 7 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">INSTITUTO PSIQUIATRICO DR JOSE HORWITZ BARAK · Reg. Metropolitana de Santiago · cierre 2026-07-13 15:01</div>
+      
+      <div class="desc">SE REQUIERE CONTRATAR EL SERVICIO DE CONFECCIÓN DE UNIFORMES ADMINISTRATIVOS TEMPORADA INVIERNO, SEGÚN BASES APROBADAS MEDIANTE RESOLUCIÓN EXENTA N°1322 DE FECHA 02 DE JULIO DE 2026</div>
+      <div class="acciones">
+        <button onclick="setMarca('1057476-30-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1057476-30-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1057476-30-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región del Ñuble" data-codigo="1532886-2-LE26"
+         data-cierre="2026-07-13 15:01" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1532886-2-LE26" target="_blank">Vestuario invierno para personal municipal</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 7 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$19.278.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">ILUSTRE MUNICIPALIDAD DE QUILLON · Reg. del Ñuble · cierre 2026-07-13 15:01</div>
+      
+      <div class="desc">La presente licitación pública tiene por objeto la adquisición de indumentaria personal como parte del vestuario de invierno que garantiza la protección contra frío, mejorando la seguridad, comodidad y productividad de los trabajadores en sus respectivas áreas</div>
+      <div class="acciones">
+        <button onclick="setMarca('1532886-2-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1532886-2-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1532886-2-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región del Maule" data-codigo="2337-20-LE26"
+         data-cierre="2026-07-13 15:06" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2337-20-LE26" target="_blank">ELEMENTOS DE PROTECCION PERSONAL PARA PATRULLEROS SEGURIDAD PUBLICA</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 7 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE LINARES · Reg. del Maule · cierre 2026-07-13 15:06</div>
+      
+      <div class="desc">LA NECESIDAD DE ADQUIRIR MEDIANTE LICITACIÓN PÚBLICA ARTÍCULOS DE SEGURIDAD PARA FUNCIONARIOS DE LA OFICINA DE SEGURIDAD PUBLICA DE NUESTRA MUNICIPALIDAD</div>
+      <div class="acciones">
+        <button onclick="setMarca('2337-20-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2337-20-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2337-20-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región de Coquimbo" data-codigo="1574-11-LE26"
+         data-cierre="2026-07-13 15:30" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1574-11-LE26" target="_blank">SUMINISTRO CALZADO INSTITUCIONAL JUNJI COQUIMBO 2026</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 7 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$44.517.607 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">JUNTA NACIONAL DE JARDINES         INFANTILES · Reg. de Coquimbo · cierre 2026-07-13 15:30</div>
+      
+      <div class="desc">SUMINISTRO CALZADO INSTITUCIONAL JUNJI COQUIMBO 2026</div>
+      <div class="acciones">
+        <button onclick="setMarca('1574-11-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1574-11-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1574-11-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región de los Lagos" data-codigo="162-15-LE26"
+         data-cierre="2026-07-13 16:00" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=162-15-LE26" target="_blank">UNIFORMES INSTITUCIONALES</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 7 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">SUBSECRETARIA DE SALUD PUBLICA · Reg. de los Lagos · cierre 2026-07-13 16:00</div>
+      
+      <div class="desc">La Secretaria Regional Ministerial de Salud, a través de la COMPIN Región de Los Lagos, llama a Licitación Pública, para la contratación del “servicio de adquisición de Uniformes Institucionales y calzado de seguridad, para funcionarios de la Seremi de Salud R</div>
+      <div class="acciones">
+        <button onclick="setMarca('162-15-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('162-15-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('162-15-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región de Magallanes y de la Antártica" data-codigo="855-13-LE26"
+         data-cierre="2026-07-13 18:00" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=855-13-LE26" target="_blank">GDP-ADQ. VESTUARIO Y CALZADO JUNJI XII</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 7 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$24.279.200 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">JUNTA NACIONAL DE JARDINES         INFANTILES · Reg. de Magallanes y de la Antártica · cierre 2026-07-13 18:00</div>
+      
+      <div class="desc">La Junta Nacional de Jardines Infantiles, JUNJI, a través de la Subdirección de Gestión y Desarrollo de las Personas, requiere la ADQUISICION DE VESTUARIO Y CALZADO PARA FUNCIONARIAS/OS DE LA JUNTA NACIONAL DE JARDINES INFANTILES, PROGRAMAS 01, 02 Y 04, REGION</div>
+      <div class="acciones">
+        <button onclick="setMarca('855-13-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('855-13-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('855-13-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región de Valparaíso" data-codigo="4044-43-LE26"
+         data-cierre="2026-07-13 19:54" data-score="75" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=4044-43-LE26" target="_blank">ADQUISICIÓN DE INDUMENTARIA Y EPP</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 7 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$64.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">75 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE ISLA DE PASCUA · Reg. de Valparaíso · cierre 2026-07-13 19:54</div>
+      
+      <div class="desc">ADQUISICIÓN DE INDUMENTARIA LABORAL Y ELEMENTOS DE PROTECCIÓN PERSONAL</div>
+      <div class="acciones">
+        <button onclick="setMarca('4044-43-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('4044-43-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('4044-43-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región Metropolitana de Santiago" data-codigo="4956-52-LE26"
+         data-cierre="2026-07-14 15:01" data-score="75" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=4956-52-LE26" target="_blank">ADQ. E INSTALACIÓN DE EQUIPOS EPP BOMBERIL</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 8 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$33.372.742 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">75 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE RENCA · Reg. Metropolitana de Santiago · cierre 2026-07-14 15:01</div>
+      
+      <div class="desc">PROYECTO: MEJORAMIENTO CUARTEL DE BOMBEROS. 21° COMPAÑIA, BOMBEROS RENCA, COD BIP 40019686-0  “ADQUISICIÓN E INSTALACIÓN DE EQUIPOS: LAVADORA INDUSTRIAL PARA DESCONTAMINACIÓN DE EPP BOMBERIL y GABINETE INDUSTRIAL DE SECADO PARA EPP BOMBERIL”  El presente p</div>
+      <div class="acciones">
+        <button onclick="setMarca('4956-52-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('4956-52-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('4956-52-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región de la Araucanía" data-codigo="1979-143-LP26"
+         data-cierre="2026-07-14 16:00" data-score="35" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1979-143-LP26" target="_blank">147.26 “CONVENIO DE SUMINISTRO DE GUANTES PARA NODO COSTERO: HOSPITAL NVA IMPERIAL.”</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 8 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">35 pts</span></div>
+      <div class="meta">SERVICIO DE SALUD ARAUCANIA SUR HOSPITAL DE NUEVA IMPERIAL · Reg. de la Araucanía · cierre 2026-07-14 16:00</div>
+      
+      <div class="desc">Se requiere contrato de suministro por el periodo de 18 meses para las adquisiciones de “CONVENIO DE SUMINISTRO DE GUANTES PARA NODO COSTERO: HOSPITAL NVA IMPERIAL.” de acuerdo a necesidades del Hospital Nueva Imperial.</div>
+      <div class="acciones">
+        <button onclick="setMarca('1979-143-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1979-143-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1979-143-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región Metropolitana de Santiago" data-codigo="2196-20-LE26"
+         data-cierre="2026-07-15 10:54" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2196-20-LE26" target="_blank">SUMINISTRO DE VESTUARIO Y CALZADO DE  INVIERNO PARA USUARIOS DEL SERVICIO DE CUIDADOS Y REHABILITACION PARA EL EGRESO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 9 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">Hospital Psiquiátrico El Peral · Reg. Metropolitana de Santiago · cierre 2026-07-15 10:54</div>
+      
+      <div class="desc">SUMINISTRO DE VESTUARIO Y CALZADO DE  INVIERNO PARA USUARIOS DEL SERVICIO DE CUIDADOS Y REHABILITACION PARA EL EGRESO</div>
+      <div class="acciones">
+        <button onclick="setMarca('2196-20-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2196-20-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2196-20-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región Metropolitana de Santiago" data-codigo="598-11-LE26"
+         data-cierre="2026-07-15 13:00" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=598-11-LE26" target="_blank">Servicio Uniformes Institucionales Verano DIPRECA</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 9 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">DIRECCION PREVISION DE CARABINEROS DE CHILE · Reg. Metropolitana de Santiago · cierre 2026-07-15 13:00</div>
+      
+      <div class="desc">Contratación del servicio de confección y entrega de uniformes institucionales de verano para la Dirección de Previsión de Carabineros de Chile. El proceso busca estandarizar la imagen corporativa del personal de atención, garantizando la calidad de las telas,</div>
+      <div class="acciones">
+        <button onclick="setMarca('598-11-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('598-11-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('598-11-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región de Valparaíso" data-codigo="1048-46-LP26"
+         data-cierre="2026-07-17 15:30" data-score="75" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1048-46-LP26" target="_blank">CONV. SUMINISTRO VESTUARIO MUNICIPAL DE TERRENO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 11 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge monto">$94.582.565 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">75 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE EL TABO · Reg. de Valparaíso · cierre 2026-07-17 15:30</div>
+      
+      <div class="desc">SUPLIR DE VESTUARIO PARA LOS FUNCIONARIOS DE DISTINTAS UNIDADES MUNICIPALES.</div>
+      <div class="acciones">
+        <button onclick="setMarca('1048-46-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1048-46-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1048-46-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región del Maule" data-codigo="848-22-CO26"
+         data-cierre="2026-07-17 15:30" data-score="77" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=848-22-CO26" target="_blank">Gesdep- Adquisición de vestuario</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 11 días</span><span class="badge" title="">CO</span><span class="badge monto">$61.294.736 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">77 pts</span></div>
+      <div class="meta">JUNTA NACIONAL DE JARDINES         INFANTILES · Reg. del Maule · cierre 2026-07-17 15:30</div>
+      
+      <div class="desc">E1O2RT9 vestuario para jardines infantiles clásicos, familiares y centro educativos CECI-PMI de JUNJI, Región del Maule.</div>
+      <div class="acciones">
+        <button onclick="setMarca('848-22-CO26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('848-22-CO26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('848-22-CO26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región Metropolitana de Santiago" data-codigo="2018-6-LR26"
+         data-cierre="2026-07-17 16:00" data-score="50" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2018-6-LR26" target="_blank">Adquisición de uniformes para personal AVSEC</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 11 días</span><span class="badge" title="&gt; 5.000 UTM — contrato grande">LR</span><span class="badge monto">$367.473.373 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">50 pts</span></div>
+      <div class="meta">DIRECCION GENERAL DE AERONAUTICA CIVIL · Reg. Metropolitana de Santiago · cierre 2026-07-17 16:00</div>
+      
+      <div class="desc">Adquisición de uniformes para personal AVSEC de la Dirección General de Aeronáutica Civil  Código: E102RT9</div>
+      <div class="acciones">
+        <button onclick="setMarca('2018-6-LR26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2018-6-LR26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2018-6-LR26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región de Valparaíso" data-codigo="847-35-LP26"
+         data-cierre="2026-07-17 18:00" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=847-35-LP26" target="_blank">GESDEP - ADQ. DE VESTUARIO INSTITUCIONAL-SC 60.732</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 11 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">JUNTA NACIONAL DE JARDINES         INFANTILES · Reg. de Valparaíso · cierre 2026-07-17 18:00</div>
+      
+      <div class="desc">Las presentes Bases Administrativas norman el proceso de la propuesta pública que efectúa la Junta Nacional de Jardines Infantiles, Dirección Regional de Valparaíso, denominado “Adquisición de vestuario institucional para funcionarios de Jardines Infantiles P0</div>
+      <div class="acciones">
+        <button onclick="setMarca('847-35-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('847-35-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('847-35-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región de los Lagos" data-codigo="545598-25-LP26"
+         data-cierre="2026-07-22 12:05" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=545598-25-LP26" target="_blank">ADQUISICIÓN DE ROPA DE TRABAJO PARA FUNCIONARIOS DE SALUD DE LA CORPORACIÓN MUNICIPAL DE CASTRO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 16 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">CORP MUNICIPAL DE CASTRO PARA LA EDUCACION SALUD Y ATENCION AL MENOR · Reg. de los Lagos · cierre 2026-07-22 12:05</div>
+      
+      <div class="desc">ADQUISICIÓN DE ROPA DE TRABAJO PARA FUNCIONARIOS DE SALUD DE LA CORPORACIÓN MUNICIPAL DE CASTRO</div>
+      <div class="acciones">
+        <button onclick="setMarca('545598-25-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('545598-25-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('545598-25-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región Metropolitana de Santiago" data-codigo="29-43-LE26"
+         data-cierre="2026-07-22 15:01" data-score="70" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=29-43-LE26" target="_blank">JBP CALZADOS INSTITUCIONALES</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 16 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">70 pts</span></div>
+      <div class="meta">FUERZA AEREA DE CHILE COMANDO LOGISTICO · Reg. Metropolitana de Santiago · cierre 2026-07-22 15:01</div>
+      
+      <div class="desc">EN CONFORMIDAD A RESOLUCIÓN EXENTAN N0322.-</div>
+      <div class="acciones">
+        <button onclick="setMarca('29-43-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('29-43-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('29-43-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región de Valparaíso" data-codigo="4803-23-LE26"
+         data-cierre="2026-07-22 17:00" data-score="70" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=4803-23-LE26" target="_blank">PROVISION DE PRENDAS DE VESTIR UNIFORMES Y CALZADO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 16 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">70 pts</span></div>
+      <div class="meta">SENADO DE LA REPUBLICA · Reg. de Valparaíso · cierre 2026-07-22 17:00</div>
+      
+      <div class="desc">LICITACIÓN PÚBLICA PARA LA PROVISIÓN DE PRENDAS DE VESTIR UNIFORMES Y CALZADO PARA FUNCIONARIOS ADMINISTRATIVOS DEL SENADO, TEMPORADA PRIMAVERAVERANO 2026.</div>
+      <div class="acciones">
+        <button onclick="setMarca('4803-23-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('4803-23-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('4803-23-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región de la Araucanía" data-codigo="5586-94-LP26"
+         data-cierre="2026-07-24 12:00" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=5586-94-LP26" target="_blank">ADQUISICIÓN DE VESTUARIO Y CALZADO PARA FUNCIONARIOS Y FUNCIONARIAS DE LA UNIVERSIDAD DE LA FRONTERA</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 18 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge monto">$119.073.887 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">UNIVERSIDAD DE LA FRONTERA · Reg. de la Araucanía · cierre 2026-07-24 12:00</div>
+      
+      <div class="desc">ADQUISICIÓN DE VESTUARIO Y CALZADO PARA FUNCIONARIOS Y FUNCIONARIAS DE LA UNIVERSIDAD DE LA FRONTERA, DE ACUERDO A REQUERIMIENTO ADJUNTO.</div>
+      <div class="acciones">
+        <button onclick="setMarca('5586-94-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('5586-94-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('5586-94-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región Metropolitana de Santiago" data-codigo="707428-20-LP26"
+         data-cierre="2026-07-24 15:00" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=707428-20-LP26" target="_blank">ADQ. DE UNIFORMES PARA FUND. INTEGRA RMSO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 18 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge monto">$204.619.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">FUNDACION EDUCACIONAL PARA EL DESAROLLO INTEGRAL DE LA NIÑEZ · Reg. Metropolitana de Santiago · cierre 2026-07-24 15:00</div>
+      
+      <div class="desc">Fundación Integra, requiere adquirir uniformes para trabajadores y trabajadoras de jardines infantiles y salas cuna de Fundación Integra Región Metropolitana Sur Oriente 2026, de conformidad a lo señalado en las presentes Bases Administrativas Especiales, Base</div>
+      <div class="acciones">
+        <button onclick="setMarca('707428-20-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('707428-20-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('707428-20-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región Metropolitana de Santiago" data-codigo="633-14-LR26"
+         data-cierre="2026-07-24 16:00" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=633-14-LR26" target="_blank">Elementos de protección para brigadistas</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 18 días</span><span class="badge" title="&gt; 5.000 UTM — contrato grande">LR</span><span class="badge monto">$83.000 CLF</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">CORP NACIONAL FORESTAL · Reg. Metropolitana de Santiago · cierre 2026-07-24 16:00</div>
+      
+      <div class="desc">Convenio de suministro de elementos de protección personal y accesorios para los brigadistas forestales y personal técnico de CONAF. CÓDIGO E102RT9.</div>
+      <div class="acciones">
+        <button onclick="setMarca('633-14-LR26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('633-14-LR26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('633-14-LR26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región Metropolitana de Santiago" data-codigo="2982-36-LE26"
+         data-cierre="2026-07-27 15:00" data-score="70" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2982-36-LE26" target="_blank">VESTUARIO FORMAL ALUMNOS CURSO OFICIAL GRADUADOS ASEPOL 2026</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 21 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">70 pts</span></div>
+      <div class="meta">POLICIA DE INVESTIGACIONES DE CHILE · Reg. Metropolitana de Santiago · cierre 2026-07-27 15:00</div>
+      
+      <div class="desc">Que los alumnos cuenten con la indumentaria adecuada para el correcto desarrollo de las actividades académicas del plantel.</div>
+      <div class="acciones">
+        <button onclick="setMarca('2982-36-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2982-36-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2982-36-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región de Los Ríos" data-codigo="1057545-77-LP26"
+         data-cierre="2026-07-27 15:01" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1057545-77-LP26" target="_blank">ADQUISICION UNIFORMES Y EPP PARA FUNCIONARIOS SAMU</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 21 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">SERVICIO DE SALUD LOS RIOS · Reg. de Los Ríos · cierre 2026-07-27 15:01</div>
+      
+      <div class="desc">Adquisición de uniformes y elementos de protección personal para funcionarios SAMU de la Región de los Rios según Resolución Exenta N°2784 que aprueba las bases.</div>
+      <div class="acciones">
+        <button onclick="setMarca('1057545-77-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1057545-77-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1057545-77-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región de Valparaíso" data-codigo="1533461-1-LP26"
+         data-cierre="2026-07-30 14:00" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1533461-1-LP26" target="_blank">SUMINISTRO DE UNIFORMES ESTRUCTURALES NFPA</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 24 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">CUERPO DE BOMBEROS DE VINA DEL MAR · Reg. de Valparaíso · cierre 2026-07-30 14:00</div>
+      
+      <div class="desc">Contratación bajo la modalidad de Contrato de Suministro, de Equipos de Protección Personal EPP Estructural conforme a la norma NFPA 1970:2025, para el personal operativo del Cuerpo de Bomberos de Viña del Mar. El proceso contempla la adjudicación de un solo </div>
+      <div class="acciones">
+        <button onclick="setMarca('1533461-1-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1533461-1-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1533461-1-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región Metropolitana de Santiago" data-codigo="5240-72-LP26"
+         data-cierre="2026-07-30 15:30" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=5240-72-LP26" target="_blank">ADQUISICIÓN DE VESTUARIO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 24 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge monto">$115.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">DIRECCION DE LOGISTICA DE CARABINEROS · Reg. Metropolitana de Santiago · cierre 2026-07-30 15:30</div>
+      
+      <div class="desc">MATERIALIZAR LA ADQUISICIÓN DE VESTUARIO PARA PREFECTURA G.O.P.E. DE CARABINEROS DE CHILE</div>
+      <div class="acciones">
+        <button onclick="setMarca('5240-72-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('5240-72-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('5240-72-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div></div></div><div class="perfil seccion-lic" data-perfil="Refrigeracion Industrial"><h2>Refrigeracion Industrial — 28 licitaciones <span style="color:#c9a800">(★ 28 nuevas hoy)</span></h2><div class="cards">
+    <div class="card urgente" data-region="Región del Biobío" data-codigo="3892-27-LE26"
+         data-cierre="2026-07-06 15:00" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=3892-27-LE26" target="_blank">Reparación Sistema De Calefacción Central RIB Lebu</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$14.877.231 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE LEBU · Reg. del Biobío · cierre 2026-07-06 15:00</div>
+      
+      <div class="desc">Reparación Sistema De Calefacción Central RIB, Lebu</div>
+      <div class="acciones">
+        <button onclick="setMarca('3892-27-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('3892-27-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('3892-27-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región Metropolitana de Santiago" data-codigo="867990-48-L126"
+         data-cierre="2026-07-06 15:00" data-score="65" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=867990-48-L126" target="_blank">Aislación térmica para tuberías de caldera / CDP 91521 CC 102</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="&lt; 100 UTM (~$7M) — la más simple de postular">L1</span><span class="badge monto">$3.213.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">65 pts</span></div>
+      <div class="meta">UNIVERSIDAD DE SANTIAGO DE CHILE · Reg. Metropolitana de Santiago · cierre 2026-07-06 15:00</div>
+      
+      <div class="desc">Se requiere la contratación de un servicio de aislación térmica para tuberías de caldera en Planta Piloto DECYTAL.</div>
+      <div class="acciones">
+        <button onclick="setMarca('867990-48-L126','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('867990-48-L126','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('867990-48-L126',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de los Lagos" data-codigo="3289-10-LE26"
+         data-cierre="2026-07-06 15:05" data-score="30" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=3289-10-LE26" target="_blank">MANTENCIÓN SISTEMAS CLIMATIZACIÓN REPOLAG</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">30 pts</span></div>
+      <div class="meta">POLICIA DE INVESTIGACIONES DE CHILE · Reg. de los Lagos · cierre 2026-07-06 15:05</div>
+      
+      <div class="desc">MANTENIMIENTO PREVENTIVO Y CORRECTIVO DE LOS SISTEMAS DE CLIMATIZACIÓN DE LOS CUARTELES POLICIALES DE LAS CIUDADES DE PUERTO MONTT, PUERTO VARAS Y OSORNO.</div>
+      <div class="acciones">
+        <button onclick="setMarca('3289-10-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('3289-10-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('3289-10-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de Valparaíso" data-codigo="1422825-7-LP26"
+         data-cierre="2026-07-06 16:00" data-score="35" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1422825-7-LP26" target="_blank">CONVENIO DE MANTENIMIENTO CENTRAL TÉRMICA Y PLANTA DE CALEFACCIÓN DE SERVICIO DE ONCOLOGÍA PARA EL HCVB</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">35 pts</span></div>
+      <div class="meta">SERVICIO NACIONAL DE SALUD HOSPITAL CARLOS VAN BUREN · Reg. de Valparaíso · cierre 2026-07-06 16:00</div>
+      
+      <div class="desc">Las presentes Bases Administrativas tienen por objeto regular el llamado a Propuesta Pública para contratar los servicios de mantenimiento Periódico, Preventivo y Correctivo de central térmica y planta de calefacción del Servicio de Oncología, lo que se singul</div>
+      <div class="acciones">
+        <button onclick="setMarca('1422825-7-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1422825-7-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1422825-7-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región del Biobío" data-codigo="1057540-62-LE26"
+         data-cierre="2026-07-06 16:31" data-score="30" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1057540-62-LE26" target="_blank">CONVENIO MANTECIÓN AIRE ACONDICIONADO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">30 pts</span></div>
+      <div class="meta">SERVICIO SALUD TALCAHUANO HOSPITAL PENCO-LIRQUEN · Reg. del Biobío · cierre 2026-07-06 16:31</div>
+      
+      <div class="desc">CONVENIO DE MANTENIMIENTO PREVENTIVO, CORRECTIVO Y LLAMADOS DE EMERGENCIA PARA EQUIPOS DE AIRE ACONDICIONADO DEL HOSPITAL PENCO LIRQUEN</div>
+      <div class="acciones">
+        <button onclick="setMarca('1057540-62-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1057540-62-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1057540-62-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de la Araucanía" data-codigo="1079659-36-LE26"
+         data-cierre="2026-07-06 18:00" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1079659-36-LE26" target="_blank">ADQUISICIÓN DEL SERVICIO DE MANTENCIÓN Y REPARACIÓN DE SISTEMAS DE AIRE ACONDICIONADO PARA EL PARQUE VEHICULAR DE LA ZONA DE CARABINEROS CONTROL ORDEN PÚBLICO E INTERVENCIÓN SUR.</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$40.141.026 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">DIRECCION DE LOGISTICA DE CARABINEROS · Reg. de la Araucanía · cierre 2026-07-06 18:00</div>
+      
+      <div class="desc">ADQUISICIÓN DEL SERVICIO DE MANTENCIÓN Y REPARACIÓN DE SISTEMAS DE AIRE ACONDICIONADO PARA EL PARQUE VEHICULAR DE LA ZONA DE CARABINEROS CONTROL ORDEN PÚBLICO E INTERVENCIÓN SUR.</div>
+      <div class="acciones">
+        <button onclick="setMarca('1079659-36-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1079659-36-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1079659-36-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de Valparaíso" data-codigo="898-133-LE26"
+         data-cierre="2026-07-06 18:00" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=898-133-LE26" target="_blank">SERVICIO DE MANTENIMIENTO PREVENTIVO Y CORRECTIVO PARA SISTEMA DE CLIMATIZACIÓN DE EQUIPO RESONADOR MAGNÉTICO DEL NHCV</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 0 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">SERVICIO DE SALUD VALPARAISO SAN ANTONIO · Reg. de Valparaíso · cierre 2026-07-06 18:00</div>
+      
+      <div class="desc">La presente licitación, tiene por objeto dar a conocer las condiciones, exigencias técnicas, requisitos y características específicas que debe contener la propuesta técnica a presentar en la siguiente licitación. La Comisión de evaluación cualificará las propu</div>
+      <div class="acciones">
+        <button onclick="setMarca('898-133-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('898-133-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('898-133-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de Valparaíso" data-codigo="1725-137-LP26"
+         data-cierre="2026-07-07 12:00" data-score="50" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1725-137-LP26" target="_blank">MANTENCION BIMESTRAL SISTEMA DE AIRE ACONDICIONADO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 1 día</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge monto">$145.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">50 pts</span></div>
+      <div class="meta">SUBSECRETARÍA DE LAS CULTURAS Y LAS ARTES · Reg. de Valparaíso · cierre 2026-07-07 12:00</div>
+      
+      <div class="desc">SERVICIO DE MANTENCIÓN BIMESTRAL DE SISTEMA DE AIRE ACONDICIONADO Y SISTEMAS DE EXTRACCIÓN DE AIRE PARA EDIFICIO INSTITUCIONAL NIVEL CENTRAL Y GALERÍA GABRIELA MISTRAL, AMBOS EN LA COMUNA DE SANTIAGO</div>
+      <div class="acciones">
+        <button onclick="setMarca('1725-137-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1725-137-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1725-137-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región del Maule" data-codigo="1469-101-L126"
+         data-cierre="2026-07-07 15:00" data-score="65" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1469-101-L126" target="_blank">SERVICIO PROVISIÓN E INSTALACIÓN EQUIPOS DE CLIMATIZACIÓN PARA OFICINAS VDE Y GRUPOS INTERMEDIOS DE LA UNIVERSIDAD DE TALCA</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 1 día</span><span class="badge" title="&lt; 100 UTM (~$7M) — la más simple de postular">L1</span><span class="badge monto">$5.825.645 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">65 pts</span></div>
+      <div class="meta">UNIVERSIDAD DE TALCA · Reg. del Maule · cierre 2026-07-07 15:00</div>
+      
+      <div class="desc">La Universidad de Talca requiere servicio tiene por objeto la adquisición e instalación de sistemas de climatización para dos dependencias universitarias. 3 equipos en Vicerrectoría de desarrollo estudiantil y oficinas de grupos intermedios.</div>
+      <div class="acciones">
+        <button onclick="setMarca('1469-101-L126','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1469-101-L126','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1469-101-L126',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de Arica y Parinacota" data-codigo="5602-29-L126"
+         data-cierre="2026-07-07 15:01" data-score="50" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=5602-29-L126" target="_blank">Correspondiente a la contratación de los servicios de Mantenimiento preventivo, reparativo e instalación de Equipos de Aire Acondicionados. </a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 1 día</span><span class="badge" title="&lt; 100 UTM (~$7M) — la más simple de postular">L1</span><span class="badge monto">$4.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">50 pts</span></div>
+      <div class="meta">SUBSECRETARIA DE SALUD PUBLICA · Reg. de Arica y Parinacota · cierre 2026-07-07 15:01</div>
+      
+      <div class="desc">Correspondiente a los servicios de mantenimiento y preventivo y reparativos de Equipos de Aire Acondicionados, instalados en las dependencias de la SEREMI de Salud Arica y Parinacota.</div>
+      <div class="acciones">
+        <button onclick="setMarca('5602-29-L126','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('5602-29-L126','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('5602-29-L126',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región Metropolitana de Santiago" data-codigo="3436-72-LE26"
+         data-cierre="2026-07-08 10:03" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=3436-72-LE26" target="_blank">Servicio mant equipos aire acondicionado Item 22.06.004</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 2 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$7.820.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">DIVISION LOGISTICA DEL EJERCITO · Reg. Metropolitana de Santiago · cierre 2026-07-08 10:03</div>
+      
+      <div class="desc">Realizar el servicio de mantenimiento, recuperación y reparación de los equipos de aire acondicionado de la escuela SIC 347638</div>
+      <div class="acciones">
+        <button onclick="setMarca('3436-72-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('3436-72-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('3436-72-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región Metropolitana de Santiago" data-codigo="2274-21-CO26"
+         data-cierre="2026-07-08 16:55" data-score="52" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2274-21-CO26" target="_blank">MANT. PREV. Y CORRECTIVA CLIMATIZACION EXP.22556</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 2 días</span><span class="badge" title="">CO</span><span class="badge monto">$12.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">52 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE LA PINTANA · Reg. Metropolitana de Santiago · cierre 2026-07-08 16:55</div>
+      
+      <div class="desc">SAR SANTIAGO NUEVA EXTREMADURA Y CCR DE LA RED DE SALUD DE LA MUNICIPALIDAD DE LA PINTANA</div>
+      <div class="acciones">
+        <button onclick="setMarca('2274-21-CO26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2274-21-CO26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2274-21-CO26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región del Biobío" data-codigo="2078-9-LE26"
+         data-cierre="2026-07-08 17:00" data-score="30" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2078-9-LE26" target="_blank">SERVICIOS MANTENCION PREVENTIVA DE EQUIPIOS DE AIRE ACONDICIONADO DE LA SEREMI DE SALUD REGION DE BIOBIO SC75</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 2 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">30 pts</span></div>
+      <div class="meta">SUBSECRETARIA DE SALUD PUBLICA · Reg. del Biobío · cierre 2026-07-08 17:00</div>
+      
+      <div class="desc">PROVEER LA CONTRATACION DE SERVICIOS MANTENCION PREVENTIVA DE EQUIPIOS DE AIRE ACONDICIONADO DE LA SEREMI DE SALUD REGION DE BIOBIO SC75. VISITAS A TERRENO OBLIGATORIAS: 1) PROV. CONCEPCIÓN, MARTES 30 JUNIO, 10 HORAS, O´HIGGINS 241, OF 511. 2)PROV. BIOBIO, JUE</div>
+      <div class="acciones">
+        <button onclick="setMarca('2078-9-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2078-9-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2078-9-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región del Libertador General Bernardo O´Higgins" data-codigo="1620-27-LE26"
+         data-cierre="2026-07-08 18:38" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1620-27-LE26" target="_blank">Mantención Preventiva y Correctiva Climatización</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 2 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">SERVICIO DE SALUD HOSPITAL DE CHIMBARONGO · Reg. del Libertador General Bernardo O´Higgins · cierre 2026-07-08 18:38</div>
+      
+      <div class="desc">El HOSPITAL DE MERCEDES DE CHIMBARONGO, en adelante “El Hospital”, con la finalidad de lograr un contrato de mantenimiento preventivo para 1 año prorrogable a 2 años de mantenimiento preventivo y correctivo de equipos de climatización y extracción de aire, por</div>
+      <div class="acciones">
+        <button onclick="setMarca('1620-27-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1620-27-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1620-27-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de Atacama" data-codigo="1705-15-L126"
+         data-cierre="2026-07-09 15:00" data-score="58" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1705-15-L126" target="_blank">MANTENIMIENTO DE EQUIPOS DE REFRIGERACIÓN </a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 3 días</span><span class="badge" title="&lt; 100 UTM (~$7M) — la más simple de postular">L1</span><span class="badge monto">$3.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">58 pts</span></div>
+      <div class="meta">HOSPITAL ADRIANA COUSINO DE QUINTERO · Reg. de Atacama · cierre 2026-07-09 15:00</div>
+      
+      <div class="desc">“Servicios de mantenimiento preventivo y correctivo Refrigeradores” año 2026, de Hospital Adriana Cousiño de Quintero del Servicio de Salud Viña del Mar- Quillota-Petorca.</div>
+      <div class="acciones">
+        <button onclick="setMarca('1705-15-L126','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1705-15-L126','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1705-15-L126',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región Metropolitana de Santiago" data-codigo="1428670-10-LE26"
+         data-cierre="2026-07-09 17:24" data-score="53" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1428670-10-LE26" target="_blank">SERVICIO DE AIRE ACONDICIONADO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 3 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">53 pts</span></div>
+      <div class="meta">ASOCIACION METROPOLITANA DE MUNICIPALIDADES DE SANTIAGO SUR PARA LA GE · Reg. Metropolitana de Santiago · cierre 2026-07-09 17:24</div>
+      
+      <div class="desc">Contratar un servicio integral de mantención preventiva, correctiva e instalación de equipos de aire acondicionado cuando se requiera para las dependencias de MSUR, que permita diagnosticar, reparar e instalar nuevos equipos y mantener optimas condiciones oper</div>
+      <div class="acciones">
+        <button onclick="setMarca('1428670-10-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1428670-10-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1428670-10-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card urgente" data-region="Región de Valparaíso" data-codigo="2176-29-LP26"
+         data-cierre="2026-07-09 20:00" data-score="43" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2176-29-LP26" target="_blank">MANTENCION CLIMATIZACION TRIBUNALES REGION VALPARAISO</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-urgente">cierra en 3 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">43 pts</span></div>
+      <div class="meta">CORP ADMINISTRATIVA DEL PODER JUDICIAL · Reg. de Valparaíso · cierre 2026-07-09 20:00</div>
+      
+      <div class="desc">MANTENCION CLIMATIZACION TRIBUNALES REGION VALPARAISO</div>
+      <div class="acciones">
+        <button onclick="setMarca('2176-29-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2176-29-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2176-29-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región de Magallanes y de la Antártica" data-codigo="1079445-35-LE26"
+         data-cierre="2026-07-10 12:56" data-score="53" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1079445-35-LE26" target="_blank">ADQ. CALEFACCION CENTRAL COM POBLACIONES</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 4 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$17.850.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">53 pts</span></div>
+      <div class="meta">DIRECCION DE LOGISTICA DE CARABINEROS · Reg. de Magallanes y de la Antártica · cierre 2026-07-10 12:56</div>
+      
+      <div class="desc">“ADQUISIÓN DE CALEFACCIÓN CENTRAL PARA EDIFICIO DON BOSCO DEPARTAMENTOS 41, 42, 43, 44 COMISIÓN POBLACIONES”.</div>
+      <div class="acciones">
+        <button onclick="setMarca('1079445-35-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1079445-35-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1079445-35-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región Metropolitana de Santiago" data-codigo="4246-8-LE26"
+         data-cierre="2026-07-10 13:00" data-score="53" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=4246-8-LE26" target="_blank">Mantenimiento sistema climatización data center</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 4 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">53 pts</span></div>
+      <div class="meta">SUPERINTENDENCIA DE CASINOS DE JUEGO · Reg. Metropolitana de Santiago · cierre 2026-07-10 13:00</div>
+      
+      <div class="desc">El objetivo de la presente licitación pública es la contratación de los servicios de mantenimiento preventivo y correctivo del sistema de climatización Precisa de su Datacenter, por un período de 12 meses, el que está constituido por dos equipos marca Stulz, m</div>
+      <div class="acciones">
+        <button onclick="setMarca('4246-8-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('4246-8-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('4246-8-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región de Arica y Parinacota" data-codigo="5512-12-LE26"
+         data-cierre="2026-07-10 15:30" data-score="53" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=5512-12-LE26" target="_blank">ADQUISICIÓN DE EQUIPOS DE AIRE ACONDICIONADO PROYECTO UTA 22991 y URY2457</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 4 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$20.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">53 pts</span></div>
+      <div class="meta">UNIVERSIDAD DE TARAPACA · Reg. de Arica y Parinacota · cierre 2026-07-10 15:30</div>
+      
+      <div class="desc">Se requiere la Adquisición de equipos de aire acondicionado con instalación incluida, según especificaciones de anexo N°2</div>
+      <div class="acciones">
+        <button onclick="setMarca('5512-12-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('5512-12-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('5512-12-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región de Tarapacá" data-codigo="2174-9-LE26"
+         data-cierre="2026-07-10 16:00" data-score="38" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2174-9-LE26" target="_blank">Mantención aire acondicionado Juzg. Alto Hospicio</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 4 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">38 pts</span></div>
+      <div class="meta">CORP ADMINISTRATIVA DEL PODER JUDICIAL · Reg. de Tarapacá · cierre 2026-07-10 16:00</div>
+      
+      <div class="desc">3169-1-PC26</div>
+      <div class="acciones">
+        <button onclick="setMarca('2174-9-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2174-9-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2174-9-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región Aysén del General Carlos Ibáñez del Campo" data-codigo="1209403-4-LE26"
+         data-cierre="2026-07-13 15:00" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1209403-4-LE26" target="_blank">SERVICIO DE MANTENCIÓN PREVENTIVA CALEFACCIÓN</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 7 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">SERVICIO NACIONAL DE PROTECCIÓN ESPECIALIZADA A LA NIÑEZ Y ADOLESCENCI · Reg. Aysén del General Carlos Ibáñez del Campo · cierre 2026-07-13 15:00</div>
+      
+      <div class="desc">Disponer de un contrato de suministro destinado a la ejecución de mantenciones preventivas programadas de los sistemas de calefacción, calderas y equipos de climatización de las Dependencias Residenciales a cargo de la Dirección Regional de Aysén del Servicio </div>
+      <div class="acciones">
+        <button onclick="setMarca('1209403-4-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1209403-4-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1209403-4-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card pronto" data-region="Región Metropolitana de Santiago" data-codigo="758004-2-LP26"
+         data-cierre="2026-07-14 17:00" data-score="65" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=758004-2-LP26" target="_blank">Renovación sistema climatización Data Center CSN</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-pronto">cierra en 8 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge monto">$110.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">65 pts</span></div>
+      <div class="meta">UNIVERSIDAD DE CHILE · Reg. Metropolitana de Santiago · cierre 2026-07-14 17:00</div>
+      
+      <div class="desc">Por el presente instrumento, el Centro Sismológico Nacional de la Facultad de Ciencias Físicas y Matemáticas de la Universidad de Chile; convoca a licitación para la contratación del servicio de renovación del sistema de climatización para su Data Center, segú</div>
+      <div class="acciones">
+        <button onclick="setMarca('758004-2-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('758004-2-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('758004-2-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región de Coquimbo" data-codigo="2446-185-LE26"
+         data-cierre="2026-07-15 15:01" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2446-185-LE26" target="_blank">INSTALACIÓN SISTEMA DE CLIMATIZACIÓN ESTADIO F.S.R</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 9 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$30.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">I MUNICIPALIDAD DE COQUIMBO · Reg. de Coquimbo · cierre 2026-07-15 15:01</div>
+      
+      <div class="desc">El presente proceso licitatorio tiene por objeto contratar el servicio integral de mantención, adquisición e instalación del sistema de aire acondicionado para el Sector VIP de los pisos 3 y 4 del Estadio Municipal Francisco Sánchez Rumoroso, con el propósito </div>
+      <div class="acciones">
+        <button onclick="setMarca('2446-185-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2446-185-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2446-185-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región de Magallanes y de la Antártica" data-codigo="2183-9-LP26"
+         data-cierre="2026-07-17 16:14" data-score="45" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=2183-9-LP26" target="_blank">MANTENIMIENTO SEMESTRAL EQUIPOS DE CLIMATIZACIÓN</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 11 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">45 pts</span></div>
+      <div class="meta">CORP ADMINISTRATIVA DEL PODER JUDICIAL · Reg. de Magallanes y de la Antártica · cierre 2026-07-17 16:14</div>
+      
+      <div class="desc">MANTENIMIENTO SEMESTRAL DE EQUIPOS DE CLIMATIZACIÓN Y EXTRACCIÓN DE AIRE PARA LOS TRIBUNALES DE LA JURISDICCIÓN DE PUNTA ARENAS</div>
+      <div class="acciones">
+        <button onclick="setMarca('2183-9-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('2183-9-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('2183-9-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región del Biobío" data-codigo="1550-2-LE26"
+         data-cierre="2026-07-17 18:00" data-score="55" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1550-2-LE26" target="_blank">LE-4948 Mantención Sistema Climatización DR Concep</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 11 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">55 pts</span></div>
+      <div class="meta">SERVICIO DE IMPUESTOS INTERNOS DIRECCION · Reg. del Biobío · cierre 2026-07-17 18:00</div>
+      
+      <div class="desc">El objeto de la presente licitación es la contratación del servicio de Mantención preventiva, correctiva e instalación de los sistemas de Climatización y ventilación de la VIII Dirección Regional de Concepción, dependiendo de la disponibilidad presupuestaria d</div>
+      <div class="acciones">
+        <button onclick="setMarca('1550-2-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1550-2-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1550-2-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región del Biobío" data-codigo="3256-6-LE26"
+         data-cierre="2026-07-20 17:00" data-score="70" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=3256-6-LE26" target="_blank">NORMALIZACIÓN SIST. CALEFACCIÓN EDIF. COMANFITRAN</a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 14 días</span><span class="badge" title="100 a 1.000 UTM (~$7M–$70M)">LE</span><span class="badge monto">$13.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">70 pts</span></div>
+      <div class="meta">DIRECCION DE ABASTECIMIENTO DE LA ARMADA · Reg. del Biobío · cierre 2026-07-20 17:00</div>
+      
+      <div class="desc">Se requiere efectuar la normalización del sistema de calefacción en dependencias del Edificio del Comando Anfibio y de Transportes Navales ubicado al interior de la Base Naval de Talcahuano. Lo anterior, acorde a las especificaciones técnicas indicadas en letr</div>
+      <div class="acciones">
+        <button onclick="setMarca('3256-6-LE26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('3256-6-LE26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('3256-6-LE26',null)" title="quitar marca">↺</button>
+      </div>
+    </div>
+    <div class="card holgado" data-region="Región de los Lagos" data-codigo="1409-12-LP26"
+         data-cierre="2026-07-22 15:00" data-score="60" data-estado-csv="">
+      <h3><a href="https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=1409-12-LP26" target="_blank">Mantenimiento sistema de climatización </a></h3>
+      <div class="badges"><span class="badge nueva">★ NUEVA HOY</span><span class="badge dias-holgado">cierra en 16 días</span><span class="badge" title="1.000 a 2.000 UTM (~$70M–$140M)">LP</span><span class="badge monto">$144.000.000 CLP</span><span class="badge score" title="Puntaje de calce 0-100: plazo + tipo + monto ideal + región preferida - equipo adicional">60 pts</span></div>
+      <div class="meta">DIRECCION GENERAL DE AERONAUTICA CIVIL · Reg. de los Lagos · cierre 2026-07-22 15:00</div>
+      
+      <div class="desc">Propuesta pública para la contratación del servicio de mantenimiento preventivo y correctivo de los sistemas de climatización en dependencias del Aeropuerto El Tepual de la Dirección General de Aeronáutica Civil, por un periodo de veinticuatro 24 meses</div>
+      <div class="acciones">
+        <button onclick="setMarca('1409-12-LP26','INTERESA')">★ Interesa</button>
+        <button onclick="setMarca('1409-12-LP26','DESCARTADA')">✖ Descartar</button>
+        <button onclick="setMarca('1409-12-LP26',null)" title="quitar marca">↺</button>
+      </div>
+    </div></div></div>
+
+
+<div class="perfil"><h2>Estadísticas del pipeline</h2>
+<table class="plana"><tr><th>Perfil</th><th>Organismos que más publican</th><th>Regiones</th><th>Por tipo</th></tr>
+<tr><td><b>Ropa Industrial</b><br>62 licitaciones<br>monto promedio: $76.604.417 CLP</td><td>4× JUNTA NACIONAL DE JARDINES         INFANTILES<br>3× DIRECCION DE LOGISTICA DE CARABINEROS<br>2× SUBSECRETARIA DE SALUD PUBLICA<br>2× I MUNICIPALIDAD DE PUNTA ARENAS<br>2× DIRECCION GENERAL DE GENDARMERIA DE CHIL</td><td>25× Región Metropolitana de Santiago<br>10× Región de Valparaíso<br>4× Región de Coquimbo<br>4× Región del Biobío<br>4× Región del Maule</td><td>LE: 38 · LP: 16 · CO: 3 · LR: 3 · L1: 2</td></tr><tr><td><b>Refrigeracion Industrial</b><br>28 licitaciones<br>monto promedio: $38.048.460 CLP</td><td>3× CORP ADMINISTRATIVA DEL PODER JUDICIAL<br>2× DIRECCION DE LOGISTICA DE CARABINEROS<br>2× SUBSECRETARIA DE SALUD PUBLICA<br>1× I MUNICIPALIDAD DE LEBU<br>1× UNIVERSIDAD DE SANTIAGO DE CHILE</td><td>6× Región Metropolitana de Santiago<br>5× Región del Biobío<br>4× Región de Valparaíso<br>2× Región de los Lagos<br>2× Región de Arica y Parinacota</td><td>LE: 17 · LP: 6 · L1: 4 · CO: 1</td></tr></table></div>
+<footer>Generado por generar_reporte.py — para actualizar datos ejecuta buscar.bat ·
+las tarjetas descartadas se ocultan con el filtro "Sin descartadas" (por defecto)</footer>
+<script>
+const KEY = 'marcasLicitaciones';
+function getMarcas(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
+function setMarca(cod, estado){
+  const m = getMarcas();
+  if(estado){ m[cod] = estado; } else { delete m[cod]; }
+  localStorage.setItem(KEY, JSON.stringify(m));
+  aplicarMarcas();
+}
+function aplicarMarcas(){
+  const m = getMarcas();
+  document.querySelectorAll('.card').forEach(function(c){
+    const s = m[c.dataset.codigo] || c.dataset.estadoCsv || '';
+    c.classList.toggle('marcada-interesa', s === 'INTERESA');
+    c.classList.toggle('marcada-descartada', s === 'DESCARTADA');
+  });
+  aplicarFiltros();
+}
+function aplicarFiltros(){
+  const reg = document.getElementById('selRegion').value;
+  const ver = document.getElementById('selVer').value;
+  const perfil = document.getElementById('selPerfil').value;
+  const m = getMarcas();
+  document.querySelectorAll('.seccion-lic').forEach(function(s){
+    s.style.display = (perfil === 'todos' || s.dataset.perfil === perfil) ? '' : 'none';
+  });
+  let visibles = 0;
+  document.querySelectorAll('.card').forEach(function(c){
+    const estado = m[c.dataset.codigo] || c.dataset.estadoCsv || '';
+    const sec = c.closest('.seccion-lic');
+    let ok = (reg === 'todas' || c.dataset.region === reg);
+    ok = ok && (perfil === 'todos' || !sec || sec.dataset.perfil === perfil);
+    if(ver === 'interesa') ok = ok && estado === 'INTERESA';
+    if(ver === 'sindesc')  ok = ok && estado !== 'DESCARTADA';
+    c.style.display = ok ? '' : 'none';
+    if(ok) visibles++;
+  });
+  document.getElementById('resumenFiltro').textContent = 'mostrando ' + visibles + ' licitaciones';
+}
+function ordenar(){
+  const por = document.getElementById('selOrden').value;
+  document.querySelectorAll('.cards').forEach(function(grupo){
+    const cards = Array.from(grupo.children);
+    cards.sort(function(a,b){
+      if(por === 'puntaje') return (b.dataset.score - a.dataset.score);
+      return (a.dataset.cierre || '9999').localeCompare(b.dataset.cierre || '9999');
+    });
+    cards.forEach(function(c){ grupo.appendChild(c); });
+  });
+}
+async function exportarMarcas(){
+  const data = JSON.stringify(getMarcas(), null, 2);
+  if(window.showSaveFilePicker){
+    try{
+      const h = await showSaveFilePicker({suggestedName:'marcas.json',
+        types:[{description:'JSON', accept:{'application/json':['.json']}}]});
+      const w = await h.createWritable(); await w.write(data); await w.close();
+      alert('Guardado. Si lo dejaste en la carpeta ofertas del proyecto, la próxima búsqueda pasará tus marcas al Excel.');
+      return;
+    }catch(e){ if(e.name === 'AbortError') return; }
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([data], {type:'application/json'}));
+  a.download = 'marcas.json'; a.click();
+  alert('Se descargó marcas.json — muévelo a la carpeta ofertas del proyecto.');
+}
+window.addEventListener('DOMContentLoaded', aplicarMarcas);
+</script>
+</body></html>
