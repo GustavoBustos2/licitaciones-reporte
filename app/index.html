@@ -6,7 +6,8 @@
 <meta name="theme-color" content="#0d3b66">
 <title>Radar MP — Licitaciones y Compra Ágil</title>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon.svg">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <style>
 :root{--azul:#0d3b66;--fondo:#f2f5f8;--tinta:#1a2733;--gris:#5c6b78}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -17,7 +18,7 @@ header h1{margin:0;font-size:18px;display:flex;align-items:center;gap:8px}
 .aviso-nuevas{background:#ffd700;color:#4a3800;font-weight:700;font-size:12px;
   border-radius:10px;padding:4px 10px;display:inline-block;margin-top:6px}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:#fff;
-  border-bottom:1px solid #dde5ec;position:sticky;top:64px;z-index:9;scrollbar-width:none}
+  border-bottom:1px solid #dde5ec;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{white-space:nowrap;border:1px solid #c3d0dc;border-radius:16px;padding:6px 14px;
   font-size:13px;background:#fff;color:var(--tinta);cursor:pointer}
@@ -25,24 +26,25 @@ header h1{margin:0;font-size:18px;display:flex;align-items:center;gap:8px}
 .chip.crear{border-style:dashed;color:var(--azul);font-weight:600}
 .chip.propio{border-color:#f0c419;background:#fffbe6}
 .chip.propio.activo{background:var(--azul);color:#fff}
+.buscador{padding:8px 16px 0}
+.buscador input{width:100%;padding:10px 14px;border:1px solid #c3d0dc;border-radius:12px;font-size:14px}
 .form-perfil{background:#fff;margin:10px 16px;padding:14px;border-radius:12px;
   box-shadow:0 2px 8px rgba(0,0,0,.12);display:none}
 .form-perfil label{font-size:12px;font-weight:600;display:block;margin:8px 0 3px}
 .form-perfil input{width:100%;padding:9px;border:1px solid #c3d0dc;border-radius:8px;font-size:14px}
 .form-perfil .hint{font-size:11px;color:var(--gris);margin-top:2px}
 .form-perfil .botones{display:flex;gap:8px;margin-top:12px}
-.form-perfil button{flex:1;padding:10px;border-radius:9px;border:none;font-size:13px;font-weight:600;cursor:pointer}
-.gestion{display:none;gap:8px;padding:0 16px 4px;font-size:12px}
+.form-perfil .botones button{flex:1;padding:10px;border-radius:9px;border:none;font-size:13px;font-weight:600;cursor:pointer}
+.gestion{display:none;gap:8px;padding:6px 16px 0;font-size:12px}
 .gestion button{border:1px solid #c3d0dc;background:#fff;border-radius:8px;padding:5px 12px;font-size:12px}
 .filtros{display:flex;gap:8px;padding:8px 16px;flex-wrap:wrap;align-items:center;font-size:12px}
 .filtros select{font-size:12px;padding:5px 8px;border-radius:8px;border:1px solid #c3d0dc;background:#fff}
-.lista{padding:4px 12px 90px;display:flex;flex-direction:column;gap:10px}
+.lista{padding:4px 12px 110px;display:flex;flex-direction:column;gap:10px}
 .card{background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.08);
   border-left:5px solid #999;display:flex;flex-direction:column;gap:6px}
 .card.urgente{border-left-color:#d62828}.card.pronto{border-left-color:#f77f00}.card.holgado{border-left-color:#2a9d8f}
 .card.agil{background:#fffbe6;border:1px solid #edd98a;border-left-width:5px}
 .card.m-interesa{outline:3px solid #ffd700;background:#fffdf2}
-.card.m-descartada{display:none}
 .card h3{margin:0;font-size:14px;line-height:1.35}
 .card h3 a{color:var(--azul);text-decoration:none}
 .badges{display:flex;gap:5px;flex-wrap:wrap}
@@ -57,17 +59,37 @@ details summary{color:var(--azul);font-weight:600;cursor:pointer}
 .acciones button{font-size:12px;padding:6px 12px;border-radius:9px;border:1px solid #c3d0dc;
   background:#fff;cursor:pointer}
 .vacio{text-align:center;color:var(--gris);padding:40px 20px;font-size:14px}
+.mas{margin:6px auto 0;display:block;background:var(--azul);color:#fff;border:none;
+  border-radius:12px;padding:11px 26px;font-size:13px;font-weight:600;cursor:pointer}
 .pie{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dde5ec;
   padding:8px 16px calc(8px + env(safe-area-inset-bottom));font-size:11px;color:var(--gris);
-  display:flex;justify-content:space-between;align-items:center}
-#instalar{background:var(--azul);color:#fff;border:none;border-radius:9px;padding:7px 14px;
-  font-size:12px;font-weight:600;display:none}
-.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#1a2733;color:#fff;
-  padding:9px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none}
+  display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pie button,.pie a{background:var(--azul);color:#fff;border:none;border-radius:9px;padding:7px 12px;
+  font-size:11px;font-weight:600;text-decoration:none;white-space:nowrap}
+#instalar{display:none}
+.hint-ios{display:none;background:#fff8e1;border-top:1px solid #e6c95c;padding:8px 16px;
+  font-size:12px;color:#5c4400;position:fixed;bottom:44px;left:0;right:0}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1a2733;color:#fff;
+  padding:9px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:50}
 .toast.ver{opacity:.95}
+.overlay{position:fixed;inset:0;background:var(--azul);color:#fff;z-index:100;display:none;
+  flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:30px}
+.overlay img{width:90px;margin-bottom:14px}
+.overlay h2{margin:0 0 6px;font-size:24px}
+.overlay p{font-size:14px;opacity:.85;max-width:340px;line-height:1.5}
+.overlay button{width:100%;max-width:320px;padding:14px;border:none;border-radius:12px;
+  font-size:15px;font-weight:700;margin-top:10px;cursor:pointer}
 </style>
 </head>
 <body>
+<div class="overlay" id="bienvenida">
+  <img src="icon-192.png" alt="">
+  <h2>Radar MP</h2>
+  <p>Todas las licitaciones y compras ágiles del Estado de Chile, filtradas para tu empresa
+  y actualizadas 4 veces al día.</p>
+  <button style="background:#f0c419;color:#4a3800" onclick="empezar(true)">🏢 Crear el perfil de mi empresa</button>
+  <button style="background:rgba(255,255,255,.15);color:#fff" onclick="empezar(false)">Explorar rubros de ejemplo</button>
+</div>
 <header>
   <h1>📡 Radar MP <span style="font-size:10px;background:#f0c419;color:#4a3800;border-radius:8px;padding:2px 8px">BETA</span></h1>
   <div class="sub" id="actualizado">cargando datos...</div>
@@ -92,24 +114,27 @@ details summary{color:var(--azul);font-weight:600;cursor:pointer}
   <button onclick="abrirForm(rubroActivo)">✎ Editar perfil</button>
   <button onclick="borrarPerfil(rubroActivo)">🗑 Eliminar</button>
 </div>
+<div class="buscador"><input id="fTexto" placeholder="🔎 Buscar por texto libre (ej: guantes, techumbre...)" oninput="renderDesdeCero()"></div>
 <div class="filtros">
-  <select id="fTipo" onchange="render()">
+  <select id="fTipo" onchange="renderDesdeCero()">
     <option value="todo">Todo</option>
     <option value="agil">⚡ Compra Ágil</option>
     <option value="lic">Licitaciones</option>
   </select>
-  <select id="fRegion" onchange="render()"><option value="todas">Todas las regiones</option></select>
-  <select id="fVer" onchange="render()">
+  <select id="fRegion" onchange="renderDesdeCero()"><option value="todas">Todas las regiones</option></select>
+  <select id="fVer" onchange="renderDesdeCero()">
     <option value="activas">Activas</option>
     <option value="nuevas">★ Nuevas</option>
     <option value="marcadas">Mis marcadas</option>
-    <option value="todas">Todas (incl. descartadas)</option>
+    <option value="todas">Todas</option>
   </select>
 </div>
 <div class="lista" id="lista"></div>
+<div class="hint-ios" id="hintIos">📲 En iPhone: toca <b>Compartir</b> y luego <b>"Añadir a pantalla de inicio"</b> para instalar la app.</div>
 <div class="pie">
   <span id="conteo"></span>
-  <button id="instalar">📲 Instalar app</button>
+  <a href="mailto:nmaureira@ucsc.cl?subject=Sugerencia%20Radar%20MP" id="feedback">💬 Sugerencias</a>
+  <button id="instalar">📲 Instalar</button>
 </div>
 <div class="toast" id="toast"></div>
 <script src="app.js"></script>

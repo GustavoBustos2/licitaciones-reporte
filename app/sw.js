@@ -1,6 +1,7 @@
 /* Radar MP — service worker: app usable offline, datos siempre frescos si hay red. */
-const CACHE = 'radar-mp-v2';
-const SHELL = ['./index.html', './app.js', './manifest.webmanifest', './icon.svg'];
+const CACHE = 'radar-mp-v3';
+const SHELL = ['./index.html', './app.js', './manifest.webmanifest', './icon.svg',
+               './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
