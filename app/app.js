@@ -130,6 +130,42 @@ function htmlCA(x) {
     </div></div>`;
 }
 
+/* ---------- plantillas de rubros para partir ---------- */
+const PLANTILLAS = {
+  '💻 Informática': { claves: 'informatica, computador, notebook, impresora, software, licencia, soporte tecnico, desarrollo de sistema, servidor, redes, toner', excluir: '' },
+  '🏗 Construcción': { claves: 'construccion, mejoramiento, reparacion, techumbre, cierre perimetral, hormigon, multicancha, sede social, ampliacion, pintura', excluir: 'arriendo, adquisicion de materiales' },
+  '🦺 EPP y vestuario': { claves: 'elementos de proteccion, epp, calzado de seguridad, ropa de trabajo, vestuario, uniforme, guantes, casco', excluir: 'teatro, ballet, escolar, arriendo' },
+  '❄ Climatización': { claves: 'climatizacion, aire acondicionado, refrigeracion, calefaccion, camara de frio, caldera, aislacion termica', excluir: 'refrigerador, congelador, arriendo, lena' },
+  '🧹 Aseo y limpieza': { claves: 'aseo, limpieza, sanitizacion, desratizacion, desinsectacion, lavanderia', excluir: 'insumos, articulos de aseo' },
+  '🍽 Alimentación': { claves: 'alimentacion, alimentos, colaciones, abarrotes, banqueteria, coffee break', excluir: '' },
+  '🚌 Transporte': { claves: 'transporte, traslado, flete, buses, transporte escolar', excluir: '' },
+  '📚 Capacitación': { claves: 'capacitacion, curso, taller, relatoria, charla, diplomado', excluir: '' },
+  '🪑 Oficina y mobiliario': { claves: 'mobiliario, escritorios, sillas, articulos de oficina, papeleria, estantes', excluir: 'arriendo' },
+  '🌳 Áreas verdes': { claves: 'areas verdes, poda, jardines, riego, paisajismo, mantencion de parques', excluir: '' },
+  '📹 Seguridad': { claves: 'vigilancia, guardias, camaras de seguridad, alarmas, control de acceso', excluir: '' },
+  '🎪 Eventos': { claves: 'produccion de evento, amplificacion, escenario, carpas, animacion, actividad masiva', excluir: '' },
+};
+function usarPlantilla(nombre) {
+  const p = PLANTILLAS[nombre];
+  $('pClaves').value = p.claves;
+  $('pExcluir').value = p.excluir;
+  if (!$('pNombre').value.trim()) $('pNombre').value = nombre.replace(/^\S+\s/, '');
+  contarVivo();
+  toast('Plantilla cargada — edítala a tu medida');
+}
+function contarVivo() {
+  const claves = $('pClaves').value.split(',').map(s => norm(s.trim())).filter(Boolean);
+  const excluir = $('pExcluir').value.split(',').map(s => norm(s.trim())).filter(Boolean);
+  const el = $('contadorVivo');
+  if (!claves.length) { el.textContent = ''; return; }
+  const p = { claves, excluir };
+  const nLic = globalLic.filter(it => matchPerfil(p, it.n)).length;
+  const nCA = globalCA.filter(it => matchPerfil(p, it.n)).length;
+  el.innerHTML = `📊 Con estas palabras verías hoy <b>${nLic} licitaciones</b> y <b>${nCA} compras ágiles ⚡</b> activas en Chile.` +
+    (nLic + nCA > 600 ? ' <span style="color:#d62828">Quizás demasiado amplio — afina o agrega exclusiones.</span>' : '') +
+    (nLic + nCA < 5 ? ' <span style="color:#f77f00">Muy pocas — prueba términos más generales o sinónimos.</span>' : '');
+}
+
 /* ---------- perfiles propios ---------- */
 function matchPerfil(p, texto) {
   const t = norm(texto);
@@ -159,6 +195,9 @@ function abrirForm(nombre) {
   $('pNombre').value = p ? p.nombre : '';
   $('pClaves').value = p ? p.claves.join(', ') : '';
   $('pExcluir').value = p ? (p.excluir || []).join(', ') : '';
+  $('plantillas').innerHTML = Object.keys(PLANTILLAS).map(n =>
+    `<button type="button" class="chip" style="font-size:11px;padding:4px 10px" onclick="usarPlantilla('${n}')">${n}</button>`).join('');
+  contarVivo();
   $('formPerfil').style.display = 'block';
   $('formPerfil').scrollIntoView({ behavior: 'smooth' });
 }
