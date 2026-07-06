@@ -1,0 +1,14 @@
+{
+  "name": "Radar MP — Licitaciones y Compra Ágil",
+  "short_name": "Radar MP",
+  "description": "Alertas de licitaciones y compras ágiles de Mercado Público Chile",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f5f8",
+  "theme_color": "#0d3b66",
+  "lang": "es-CL",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

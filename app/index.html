@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d3b66">
+<title>Radar MP — Licitaciones y Compra Ágil</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg">
+<style>
+:root{--azul:#0d3b66;--fondo:#f2f5f8;--tinta:#1a2733;--gris:#5c6b78}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;background:var(--fondo);color:var(--tinta)}
+header{background:var(--azul);color:#fff;padding:14px 16px 10px;position:sticky;top:0;z-index:10}
+header h1{margin:0;font-size:18px;display:flex;align-items:center;gap:8px}
+.sub{font-size:11px;opacity:.75;margin-top:2px}
+.aviso-nuevas{background:#ffd700;color:#4a3800;font-weight:700;font-size:12px;
+  border-radius:10px;padding:4px 10px;display:inline-block;margin-top:6px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:#fff;
+  border-bottom:1px solid #dde5ec;position:sticky;top:64px;z-index:9;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;border:1px solid #c3d0dc;border-radius:16px;padding:6px 14px;
+  font-size:13px;background:#fff;color:var(--tinta);cursor:pointer}
+.chip.activo{background:var(--azul);color:#fff;border-color:var(--azul)}
+.filtros{display:flex;gap:8px;padding:8px 16px;flex-wrap:wrap;align-items:center;font-size:12px}
+.filtros select{font-size:12px;padding:5px 8px;border-radius:8px;border:1px solid #c3d0dc;background:#fff}
+.lista{padding:4px 12px 90px;display:flex;flex-direction:column;gap:10px}
+.card{background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.08);
+  border-left:5px solid #999;display:flex;flex-direction:column;gap:6px}
+.card.urgente{border-left-color:#d62828}.card.pronto{border-left-color:#f77f00}.card.holgado{border-left-color:#2a9d8f}
+.card.agil{background:#fffbe6;border:1px solid #edd98a;border-left-width:5px}
+.card.m-interesa{outline:3px solid #ffd700;background:#fffdf2}
+.card.m-descartada{display:none}
+.card h3{margin:0;font-size:14px;line-height:1.35}
+.card h3 a{color:var(--azul);text-decoration:none}
+.badges{display:flex;gap:5px;flex-wrap:wrap}
+.badge{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:9px;background:#e3e9ef;color:#33475b}
+.badge.rojo{background:#d62828;color:#fff}.badge.naranjo{background:#f77f00;color:#fff}
+.badge.verde{background:#2a9d8f;color:#fff}.badge.azul{background:var(--azul);color:#fff}
+.badge.oro{background:#ffd700;color:#4a3800}.badge.agil{background:#f0c419;color:#4a3800}
+.meta{font-size:11.5px;color:var(--gris)}
+details{font-size:12px;color:var(--gris)}
+details summary{color:var(--azul);font-weight:600;cursor:pointer}
+.acciones{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.acciones button{font-size:12px;padding:6px 12px;border-radius:9px;border:1px solid #c3d0dc;
+  background:#fff;cursor:pointer}
+.vacio{text-align:center;color:var(--gris);padding:40px 20px;font-size:14px}
+.pie{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dde5ec;
+  padding:8px 16px calc(8px + env(safe-area-inset-bottom));font-size:11px;color:var(--gris);
+  display:flex;justify-content:space-between;align-items:center}
+#instalar{background:var(--azul);color:#fff;border:none;border-radius:9px;padding:7px 14px;
+  font-size:12px;font-weight:600;display:none}
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#1a2733;color:#fff;
+  padding:9px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.ver{opacity:.95}
+</style>
+</head>
+<body>
+<header>
+  <h1>📡 Radar MP <span style="font-size:10px;background:#f0c419;color:#4a3800;border-radius:8px;padding:2px 8px">BETA</span></h1>
+  <div class="sub" id="actualizado">cargando datos...</div>
+  <div class="aviso-nuevas" id="avisoNuevas" style="display:none"></div>
+</header>
+<div class="chips" id="chips"></div>
+<div class="filtros">
+  <select id="fTipo" onchange="render()">
+    <option value="todo">Todo</option>
+    <option value="agil">⚡ Compra Ágil</option>
+    <option value="lic">Licitaciones</option>
+  </select>
+  <select id="fRegion" onchange="render()"><option value="todas">Todas las regiones</option></select>
+  <select id="fVer" onchange="render()">
+    <option value="activas">Activas</option>
+    <option value="nuevas">★ Nuevas</option>
+    <option value="marcadas">Mis marcadas</option>
+    <option value="todas">Todas (incl. descartadas)</option>
+  </select>
+</div>
+<div class="lista" id="lista"></div>
+<div class="pie">
+  <span id="conteo"></span>
+  <button id="instalar">📲 Instalar app</button>
+</div>
+<div class="toast" id="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
