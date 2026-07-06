@@ -22,6 +22,18 @@ header h1{margin:0;font-size:18px;display:flex;align-items:center;gap:8px}
 .chip{white-space:nowrap;border:1px solid #c3d0dc;border-radius:16px;padding:6px 14px;
   font-size:13px;background:#fff;color:var(--tinta);cursor:pointer}
 .chip.activo{background:var(--azul);color:#fff;border-color:var(--azul)}
+.chip.crear{border-style:dashed;color:var(--azul);font-weight:600}
+.chip.propio{border-color:#f0c419;background:#fffbe6}
+.chip.propio.activo{background:var(--azul);color:#fff}
+.form-perfil{background:#fff;margin:10px 16px;padding:14px;border-radius:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);display:none}
+.form-perfil label{font-size:12px;font-weight:600;display:block;margin:8px 0 3px}
+.form-perfil input{width:100%;padding:9px;border:1px solid #c3d0dc;border-radius:8px;font-size:14px}
+.form-perfil .hint{font-size:11px;color:var(--gris);margin-top:2px}
+.form-perfil .botones{display:flex;gap:8px;margin-top:12px}
+.form-perfil button{flex:1;padding:10px;border-radius:9px;border:none;font-size:13px;font-weight:600;cursor:pointer}
+.gestion{display:none;gap:8px;padding:0 16px 4px;font-size:12px}
+.gestion button{border:1px solid #c3d0dc;background:#fff;border-radius:8px;padding:5px 12px;font-size:12px}
 .filtros{display:flex;gap:8px;padding:8px 16px;flex-wrap:wrap;align-items:center;font-size:12px}
 .filtros select{font-size:12px;padding:5px 8px;border-radius:8px;border:1px solid #c3d0dc;background:#fff}
 .lista{padding:4px 12px 90px;display:flex;flex-direction:column;gap:10px}
@@ -62,6 +74,24 @@ details summary{color:var(--azul);font-weight:600;cursor:pointer}
   <div class="aviso-nuevas" id="avisoNuevas" style="display:none"></div>
 </header>
 <div class="chips" id="chips"></div>
+<div class="form-perfil" id="formPerfil">
+  <b style="font-size:14px">🏢 Perfil de mi empresa</b>
+  <label>Nombre de la empresa o rubro</label>
+  <input id="pNombre" placeholder="Ej: Constructora Los Andes">
+  <label>Palabras clave (separadas por coma)</label>
+  <input id="pClaves" placeholder="Ej: pintura, impermeabilizacion, fachada">
+  <div class="hint">La app buscará estas palabras en TODAS las licitaciones y compras ágiles de Chile, en cada actualización.</div>
+  <label>Palabras a excluir (opcional)</label>
+  <input id="pExcluir" placeholder="Ej: arriendo, aseo">
+  <div class="botones">
+    <button style="background:var(--azul);color:#fff" onclick="guardarPerfil()">Guardar y buscar</button>
+    <button style="background:#e3e9ef" onclick="document.getElementById('formPerfil').style.display='none'">Cancelar</button>
+  </div>
+</div>
+<div class="gestion" id="gestionPerfil">
+  <button onclick="abrirForm(rubroActivo)">✎ Editar perfil</button>
+  <button onclick="borrarPerfil(rubroActivo)">🗑 Eliminar</button>
+</div>
 <div class="filtros">
   <select id="fTipo" onchange="render()">
     <option value="todo">Todo</option>
