@@ -28,31 +28,35 @@ header h1{margin:0;font-size:18px;display:flex;align-items:center;gap:8px}
 .chip.propio.activo{background:var(--azul);color:#fff}
 .buscador{padding:8px 16px 0}
 .buscador input{width:100%;padding:10px 14px;border:1px solid #c3d0dc;border-radius:12px;font-size:14px}
-.form-perfil{background:#fff;margin:10px 16px;padding:14px;border-radius:12px;
+.panel{background:#fff;margin:10px 16px;padding:14px;border-radius:12px;
   box-shadow:0 2px 8px rgba(0,0,0,.12);display:none}
-.panel-empresas{background:#fff;margin:10px 16px;padding:14px;border-radius:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,.12);display:none}
+.panel .cerrar{float:right;border:none;background:none;font-size:18px;cursor:pointer}
+.panel label{font-size:12px;font-weight:600;display:block;margin:8px 0 3px}
+.panel input{width:100%;padding:9px;border:1px solid #c3d0dc;border-radius:8px;font-size:14px}
+.hint{font-size:11px;color:var(--gris);margin-top:2px}
+.botones{display:flex;gap:8px;margin-top:12px}
+.botones button{flex:1;padding:10px;border-radius:9px;border:none;font-size:13px;font-weight:600;cursor:pointer}
 .emp{border:1px solid #dde5ec;border-radius:10px;padding:10px 12px;margin-top:10px}
-.emp b{font-size:14px}
 .emp .kw{font-size:11.5px;color:var(--gris);margin:4px 0}
 .emp .stats{font-size:12px;color:#0d3b66;font-weight:600;margin:4px 0}
 .emp .btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .emp .btns button{font-size:11.5px;padding:5px 10px;border-radius:8px;border:1px solid #c3d0dc;background:#fff;cursor:pointer}
-.form-perfil label{font-size:12px;font-weight:600;display:block;margin:8px 0 3px}
-.form-perfil input{width:100%;padding:9px;border:1px solid #c3d0dc;border-radius:8px;font-size:14px}
-.form-perfil .hint{font-size:11px;color:var(--gris);margin-top:2px}
-.form-perfil .botones{display:flex;gap:8px;margin-top:12px}
-.form-perfil .botones button{flex:1;padding:10px;border-radius:9px;border:none;font-size:13px;font-weight:600;cursor:pointer}
-.gestion{display:none;gap:8px;padding:6px 16px 0;font-size:12px}
-.gestion button{border:1px solid #c3d0dc;background:#fff;border-radius:8px;padding:5px 12px;font-size:12px}
+.embudo{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.etapa{flex:1;min-width:90px;background:#f2f5f8;border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer}
+.etapa b{display:block;font-size:20px;color:var(--azul)}
+.etapa span{font-size:10.5px;color:var(--gris)}
 .filtros{display:flex;gap:8px;padding:8px 16px;flex-wrap:wrap;align-items:center;font-size:12px}
-.filtros select{font-size:12px;padding:5px 8px;border-radius:8px;border:1px solid #c3d0dc;background:#fff}
+.filtros select{font-size:12px;padding:5px 8px;border-radius:8px;border:1px solid #c3d0dc;background:#fff;max-width:46vw}
 .lista{padding:4px 12px 110px;display:flex;flex-direction:column;gap:10px}
 .card{background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.08);
   border-left:5px solid #999;display:flex;flex-direction:column;gap:6px}
 .card.urgente{border-left-color:#d62828}.card.pronto{border-left-color:#f77f00}.card.holgado{border-left-color:#2a9d8f}
 .card.agil{background:#fffbe6;border:1px solid #edd98a;border-left-width:5px}
-.card.m-interesa{outline:3px solid #ffd700;background:#fffdf2}
+.card.e-EVALUANDO{outline:3px solid #ffd700}
+.card.e-PREPARANDO{outline:3px solid #f77f00}
+.card.e-ENVIADA{outline:3px solid #0d3b66}
+.card.e-GANADA{outline:3px solid #2a9d8f;background:#e6f7ec}
+.card.e-PERDIDA{opacity:.55}
 .card h3{margin:0;font-size:14px;line-height:1.35}
 .card h3 a{color:var(--azul);text-decoration:none}
 .badges{display:flex;gap:5px;flex-wrap:wrap}
@@ -61,11 +65,13 @@ header h1{margin:0;font-size:18px;display:flex;align-items:center;gap:8px}
 .badge.verde{background:#2a9d8f;color:#fff}.badge.azul{background:var(--azul);color:#fff}
 .badge.oro{background:#ffd700;color:#4a3800}.badge.agil{background:#f0c419;color:#4a3800}
 .meta{font-size:11.5px;color:var(--gris)}
+.meta .org{color:var(--azul);text-decoration:underline dotted;cursor:pointer}
 details{font-size:12px;color:var(--gris)}
 details summary{color:var(--azul);font-weight:600;cursor:pointer}
-.acciones{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
-.acciones button{font-size:12px;padding:6px 12px;border-radius:9px;border:1px solid #c3d0dc;
+.acciones{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px;align-items:center}
+.acciones button,.acciones select{font-size:12px;padding:6px 10px;border-radius:9px;border:1px solid #c3d0dc;
   background:#fff;cursor:pointer}
+.acciones select.estado{font-weight:600;max-width:150px}
 .vacio{text-align:center;color:var(--gris);padding:40px 20px;font-size:14px}
 .mas{margin:6px auto 0;display:block;background:var(--azul);color:#fff;border:none;
   border-radius:12px;padding:11px 26px;font-size:13px;font-weight:600;cursor:pointer}
@@ -73,7 +79,7 @@ details summary{color:var(--azul);font-weight:600;cursor:pointer}
   padding:8px 16px calc(8px + env(safe-area-inset-bottom));font-size:11px;color:var(--gris);
   display:flex;justify-content:space-between;align-items:center;gap:8px}
 .pie button,.pie a{background:var(--azul);color:#fff;border:none;border-radius:9px;padding:7px 12px;
-  font-size:11px;font-weight:600;text-decoration:none;white-space:nowrap}
+  font-size:11px;font-weight:600;text-decoration:none;white-space:nowrap;cursor:pointer}
 #instalar{display:none}
 .hint-ios{display:none;background:#fff8e1;border-top:1px solid #e6c95c;padding:8px 16px;
   font-size:12px;color:#5c4400;position:fixed;bottom:44px;left:0;right:0}
@@ -87,6 +93,9 @@ details summary{color:var(--azul);font-weight:600;cursor:pointer}
 .overlay p{font-size:14px;opacity:.85;max-width:340px;line-height:1.5}
 .overlay button{width:100%;max-width:320px;padding:14px;border:none;border-radius:12px;
   font-size:15px;font-weight:700;margin-top:10px;cursor:pointer}
+table.precios{border-collapse:collapse;width:100%;margin-top:8px;font-size:11.5px}
+table.precios th{background:var(--azul);color:#fff;padding:4px 6px;text-align:left;font-size:10.5px}
+table.precios td{border-bottom:1px solid #e3e9ef;padding:5px 6px;vertical-align:top}
 </style>
 </head>
 <body>
@@ -94,7 +103,7 @@ details summary{color:var(--azul);font-weight:600;cursor:pointer}
   <img src="icon-192.png" alt="">
   <h2>Radar MP</h2>
   <p>Todas las licitaciones y compras ágiles del Estado de Chile, filtradas para tu empresa
-  y actualizadas 4 veces al día.</p>
+  y actualizadas durante todo el día.</p>
   <button style="background:#f0c419;color:#4a3800" onclick="empezar(true)">🏢 Crear el perfil de mi empresa</button>
   <button style="background:rgba(255,255,255,.15);color:#fff" onclick="empezar(false)">Explorar rubros de ejemplo</button>
 </div>
@@ -104,7 +113,9 @@ details summary{color:var(--azul);font-weight:600;cursor:pointer}
   <div class="aviso-nuevas" id="avisoNuevas" style="display:none"></div>
 </header>
 <div class="chips" id="chips"></div>
-<div class="form-perfil" id="formPerfil">
+
+<div class="panel" id="formPerfil">
+  <button class="cerrar" onclick="cerrarPaneles()">✕</button>
   <b style="font-size:14px">🏢 Perfil de mi empresa</b>
   <div class="hint" style="margin-top:6px">¿No sabes qué palabras poner? Parte de una plantilla y ajústala:</div>
   <div id="plantillas" style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 2px"></div>
@@ -118,26 +129,46 @@ details summary{color:var(--azul);font-weight:600;cursor:pointer}
   <div class="hint" id="contadorVivo" style="margin-top:8px;font-size:12px"></div>
   <div class="botones">
     <button style="background:var(--azul);color:#fff" onclick="guardarPerfil()">Guardar y buscar</button>
-    <button style="background:#e3e9ef" onclick="document.getElementById('formPerfil').style.display='none'">Cancelar</button>
+    <button style="background:#e3e9ef" onclick="cerrarPaneles()">Cancelar</button>
   </div>
 </div>
-<div class="panel-empresas" id="panelEmpresas">
-  <div style="display:flex;justify-content:space-between;align-items:center">
-    <b style="font-size:15px">🏢 Mis empresas</b>
-    <button style="border:none;background:none;font-size:18px;cursor:pointer"
-      onclick="document.getElementById('panelEmpresas').style.display='none'">✕</button>
-  </div>
-  <div class="hint" style="font-size:11.5px;color:#5c6b78">Crea todas las empresas o combinaciones de
-  palabras que quieras — cada una busca por separado en todo Chile. Se guardan en este dispositivo.</div>
+
+<div class="panel" id="panelEmpresas">
+  <button class="cerrar" onclick="cerrarPaneles()">✕</button>
+  <b style="font-size:15px">🏢 Mis empresas</b>
+  <div class="hint">Crea todas las empresas o combinaciones de palabras que quieras — quedan guardadas
+  en este dispositivo y cada una busca por separado en todo Chile.</div>
   <div id="listaEmpresas"></div>
-  <button style="width:100%;margin-top:12px;padding:11px;border-radius:10px;border:1px dashed #0d3b66;
-    background:#fff;color:#0d3b66;font-weight:600;cursor:pointer"
-    onclick="document.getElementById('panelEmpresas').style.display='none';abrirForm()">➕ Crear otra empresa</button>
+  <div class="botones">
+    <button style="background:var(--azul);color:#fff" onclick="cerrarPaneles();abrirForm()">➕ Crear otra</button>
+    <button style="background:#e3e9ef" onclick="exportarEmpresas()">⬆ Exportar</button>
+    <button style="background:#e3e9ef" onclick="importarEmpresas()">⬇ Importar</button>
+  </div>
+  <div class="hint">Exportar copia un código con todas tus empresas para pasarlas a otro teléfono
+  (ahí usas Importar) o como respaldo.</div>
 </div>
-<div class="gestion" id="gestionPerfil">
-  <button onclick="abrirForm(rubroActivo)">✎ Editar perfil</button>
-  <button onclick="borrarPerfil(rubroActivo)">🗑 Eliminar</button>
+
+<div class="panel" id="panelPipeline">
+  <button class="cerrar" onclick="cerrarPaneles()">✕</button>
+  <b style="font-size:15px">📊 Mi pipeline</b>
+  <div class="hint">Tus oportunidades por etapa. Toca una etapa para ver su lista.
+  El estado se cambia en cada tarjeta con el selector "Etapa".</div>
+  <div class="embudo" id="embudo"></div>
 </div>
+
+<div class="panel" id="panelPrecios">
+  <button class="cerrar" onclick="cerrarPaneles()">✕</button>
+  <b style="font-size:15px">💰 Precios de mercado (Compra Ágil)</b>
+  <div class="hint">Procesos recién adjudicados de tu rubro: cuántos cotizaron, el rango de ofertas
+  y a cuánto ganó el seleccionado. Úsalo para calibrar tus precios.</div>
+  <div id="contenidoPrecios"></div>
+</div>
+
+<div class="panel" id="panelComprador">
+  <button class="cerrar" onclick="cerrarPaneles()">✕</button>
+  <div id="contenidoComprador"></div>
+</div>
+
 <div class="buscador"><input id="fTexto" placeholder="🔎 Buscar por texto libre (ej: guantes, techumbre...)" oninput="renderDesdeCero()"></div>
 <div class="filtros">
   <select id="fTipo" onchange="renderDesdeCero()">
@@ -146,10 +177,20 @@ details summary{color:var(--azul);font-weight:600;cursor:pointer}
     <option value="lic">Licitaciones</option>
   </select>
   <select id="fRegion" onchange="renderDesdeCero()"><option value="todas">Todas las regiones</option></select>
+  <select id="fMonto" onchange="renderDesdeCero()">
+    <option value="todos">Cualquier monto</option>
+    <option value="chico">Hasta $5M</option>
+    <option value="medio">$5M – $50M</option>
+    <option value="grande">Más de $50M</option>
+  </select>
   <select id="fVer" onchange="renderDesdeCero()">
     <option value="activas">Activas</option>
     <option value="nuevas">★ Nuevas</option>
-    <option value="marcadas">Mis marcadas</option>
+    <option value="EVALUANDO">🟡 Evaluando</option>
+    <option value="PREPARANDO">🟠 Preparando</option>
+    <option value="ENVIADA">🔵 Enviadas</option>
+    <option value="GANADA">🟢 Ganadas</option>
+    <option value="PERDIDA">⚪ Perdidas</option>
     <option value="todas">Todas</option>
   </select>
 </div>
@@ -157,8 +198,10 @@ details summary{color:var(--azul);font-weight:600;cursor:pointer}
 <div class="hint-ios" id="hintIos">📲 En iPhone: toca <b>Compartir</b> y luego <b>"Añadir a pantalla de inicio"</b> para instalar la app.</div>
 <div class="pie">
   <span id="conteo"></span>
-  <a href="terminos.html" style="background:#e3e9ef;color:#33475b">ℹ️ Términos</a>
-  <a href="mailto:nmaureira@ucsc.cl?subject=Sugerencia%20Radar%20MP" id="feedback">💬 Sugerencias</a>
+  <button onclick="abrirPipeline()">📊</button>
+  <button id="btnPrecios" onclick="abrirPrecios()" style="display:none">💰</button>
+  <a href="terminos.html" style="background:#e3e9ef;color:#33475b">ℹ️</a>
+  <a href="mailto:nmaureira@ucsc.cl?subject=Sugerencia%20Radar%20MP">💬</a>
   <button id="instalar">📲 Instalar</button>
 </div>
 <div class="toast" id="toast"></div>
