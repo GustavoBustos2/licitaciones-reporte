@@ -190,6 +190,41 @@ function borrarPerfil(nombre) {
   rubroActivo = 'todos';
   armarUI(); renderDesdeCero();
 }
+function statsPerfil(p) {
+  const nLic = globalLic.filter(it => matchPerfil(p, it.n)).length;
+  const nCA = globalCA.filter(it => matchPerfil(p, it.n)).length;
+  return { nLic, nCA };
+}
+function abrirEmpresas() {
+  const lista = misPerfiles();
+  $('listaEmpresas').innerHTML = lista.length ? lista.map(p => {
+    const s = statsPerfil(p);
+    return `<div class="emp">
+      <b>🏢 ${p.nombre}</b>
+      <div class="kw"><b>Busca:</b> ${p.claves.join(', ')}${(p.excluir || []).length ? '<br><b>Excluye:</b> ' + p.excluir.join(', ') : ''}</div>
+      <div class="stats">📊 Hoy: ${s.nLic} licitaciones · ${s.nCA} compras ágiles ⚡</div>
+      <div class="btns">
+        <button style="background:#0d3b66;color:#fff;border:none" onclick="document.getElementById('panelEmpresas').style.display='none';setRubro('${p.nombre}')">👁 Ver oportunidades</button>
+        <button onclick="document.getElementById('panelEmpresas').style.display='none';rubroActivo='${p.nombre}';abrirForm('${p.nombre}')">✎ Editar</button>
+        <button onclick="duplicarPerfil('${p.nombre}')">⧉ Duplicar</button>
+        <button onclick="if(confirm('¿Eliminar ${p.nombre}?')){borrarPerfil('${p.nombre}');abrirEmpresas()}">🗑</button>
+      </div></div>`;
+  }).join('') : '<div class="hint" style="margin-top:10px">Aún no has creado empresas. Crea la primera 👇</div>';
+  $('formPerfil').style.display = 'none';
+  $('panelEmpresas').style.display = 'block';
+  $('panelEmpresas').scrollIntoView({ behavior: 'smooth' });
+}
+function duplicarPerfil(nombre) {
+  const p = misPerfiles().find(x => x.nombre === nombre);
+  if (!p) return;
+  const lista = misPerfiles();
+  let copia = p.nombre + ' (copia)', i = 2;
+  while (lista.some(x => x.nombre === copia)) copia = p.nombre + ' (copia ' + (i++) + ')';
+  lista.push({ nombre: copia, claves: [...p.claves], excluir: [...(p.excluir || [])] });
+  localStorage.setItem(KEY_PERFILES, JSON.stringify(lista));
+  armarUI(); abrirEmpresas();
+  toast('Duplicada como "' + copia + '" — edítala para variar las palabras');
+}
 function abrirForm(nombre) {
   const p = misPerfiles().find(x => x.nombre === nombre);
   $('pNombre').value = p ? p.nombre : '';
@@ -256,7 +291,9 @@ function renderDesdeCero() { limite = PAGINA; render(); }
 
 function armarUI() {
   const propios = misPerfiles();
-  let html = `<button class="chip crear" onclick="abrirForm()">➕ Mi empresa</button>`;
+  let html = propios.length
+    ? `<button class="chip crear" onclick="abrirEmpresas()">🏢 Mis empresas (${propios.length})</button>`
+    : `<button class="chip crear" onclick="abrirForm()">➕ Mi empresa</button>`;
   html += propios.map(p =>
     `<button class="chip propio ${p.nombre === rubroActivo ? 'activo' : ''}" onclick="setRubro('${p.nombre}')">🏢 ${p.nombre}</button>`).join('');
   html += `<button class="chip ${rubroActivo === 'todos' ? 'activo' : ''}" onclick="setRubro('todos')">Ejemplos</button>`;
