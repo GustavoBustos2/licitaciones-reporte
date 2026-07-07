@@ -572,5 +572,13 @@ window.addEventListener('appinstalled', () => { promptInstalar = null; refrescar
 /* ---------- arranque ---------- */
 if (!localStorage.getItem(KEY_ONBOARD)) $('bienvenida').style.display = 'flex';
 refrescarEstadoInstalar();
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+  // cuando el nuevo service worker toma control, recargar UNA vez para salir de
+  // cualquier versión vieja cacheada (recupera a quien quedó pegado tras un deploy)
+  let recargando = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (recargando) return; recargando = true; location.reload();
+  });
+}
 cargar();
