@@ -328,18 +328,57 @@ function abrirPipeline() {
   abrirPanel('panelPipeline');
 }
 
-/* ---------- precios de mercado ---------- */
-function abrirPrecios() {
+/* ---------- precios de mercado + competencia ---------- */
+function filasPreciosDelRubro() {
   const propio = misPerfiles().find(p => p.nombre === rubroActivo);
-  let filas = precios;
-  if (propio) filas = precios.filter(r => matchPerfil(propio, r.nombre));
-  $('contenidoPrecios').innerHTML = filas.length
-    ? `<table class="precios"><tr><th>Compra</th><th>Ofertas</th><th>Rango</th><th>Ganó</th></tr>` +
+  return propio ? precios.filter(r => matchPerfil(propio, r.nombre)) : precios;
+}
+function rankingCompetencia(filas) {
+  // detalle: "EMPRESA: $1.234.567 ★GANADOR; OTRA: $999.000; ..."
+  const comp = {};
+  filas.forEach(r => (r.detalle || '').split('; ').forEach(seg => {
+    const m = seg.match(/^(.+?): \$([\d.]+)( ★GANADOR)?$/);
+    if (!m) return;
+    const nombre = m[1].trim(), monto = parseInt(m[2].replace(/\./g, ''), 10) || 0;
+    if (!comp[nombre]) comp[nombre] = { cotizo: 0, gano: 0, montos: [] };
+    comp[nombre].cotizo++;
+    if (m[3]) comp[nombre].gano++;
+    if (monto > 0) comp[nombre].montos.push(monto);
+  }));
+  return Object.entries(comp)
+    .map(([n, c]) => ({ n, ...c, prom: c.montos.length ? c.montos.reduce((a, b) => a + b, 0) / c.montos.length : 0 }))
+    .sort((a, b) => b.gano - a.gano || b.cotizo - a.cotizo);
+}
+function abrirPrecios(vista) {
+  const filas = filasPreciosDelRubro();
+  const propio = misPerfiles().find(p => p.nombre === rubroActivo);
+  const contexto = propio ? `de <b>${propio.nombre}</b>` : 'de todos los rubros monitoreados';
+  const tabs = `<div style="display:flex;gap:8px;margin:10px 0 4px">
+    <button class="chip ${vista !== 'comp' ? 'activo' : ''}" onclick="abrirPrecios()">💰 Procesos y precios</button>
+    <button class="chip ${vista === 'comp' ? 'activo' : ''}" onclick="abrirPrecios('comp')">🥊 Tu competencia</button></div>
+    <div class="hint">Basado en compras ágiles recién adjudicadas ${contexto}. Se actualiza solo cada día.</div>`;
+
+  let cuerpo;
+  if (!filas.length) {
+    cuerpo = '<div class="hint" style="margin-top:10px">Aún estamos recolectando procesos adjudicados de tu rubro. Esta sección se llena sola día a día.</div>';
+  } else if (vista === 'comp') {
+    const rk = rankingCompetencia(filas);
+    cuerpo = rk.length
+      ? `<table class="precios"><tr><th>Empresa</th><th>Cotizó</th><th>Ganó</th><th>Oferta promedio</th></tr>` +
+        rk.slice(0, 25).map(c =>
+          `<tr><td>${c.n}</td><td>${c.cotizo}</td>
+           <td>${c.gano ? '<b style="color:#2a9d8f">' + c.gano + ' 🏆</b>' : '0'}</td>
+           <td>${c.prom ? '$' + Math.round(c.prom).toLocaleString('es-CL') : 's/i'}</td></tr>`).join('') + '</table>' +
+        '<div class="hint" style="margin-top:8px">Quién gana seguido y a qué precio promedio: tu referencia para cotizar más filudo que ellos.</div>'
+      : '<div class="hint" style="margin-top:10px">Todavía no hay detalle de competidores en estos procesos.</div>';
+  } else {
+    cuerpo = `<table class="precios"><tr><th>Compra</th><th>Ofertas</th><th>Rango</th><th>Ganó</th></tr>` +
       filas.slice(0, 30).map(r =>
         `<tr><td>${r.nombre.slice(0, 55)}</td><td>${r.ofertas}</td>
          <td>${r.min ? '$' + Math.round(r.min).toLocaleString('es-CL') + '–$' + Math.round(r.max).toLocaleString('es-CL') : 's/i'}</td>
-         <td>${r.ganador ? r.ganador.slice(0, 25) + '<br><b>$' + Math.round(r.monto || 0).toLocaleString('es-CL') + '</b>' : 'en evaluación'}</td></tr>`).join('') + '</table>'
-    : '<div class="hint" style="margin-top:10px">Aún estamos recolectando precios de procesos adjudicados de tu rubro. Esta sección se llenará sola en los próximos días.</div>';
+         <td>${r.ganador ? r.ganador.slice(0, 25) + '<br><b>$' + Math.round(r.monto || 0).toLocaleString('es-CL') + '</b>' : 'en evaluación'}</td></tr>`).join('') + '</table>';
+  }
+  $('contenidoPrecios').innerHTML = tabs + cuerpo;
   abrirPanel('panelPrecios');
 }
 
@@ -466,14 +505,37 @@ async function cargar() {
 /* onboarding + instalación */
 if (!localStorage.getItem(KEY_ONBOARD)) $('bienvenida').style.display = 'flex';
 const esIos = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
+const yaInstalada = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 if (esIos) $('hintIos').style.display = 'block';
+if (!yaInstalada && !localStorage.getItem('radarBannerOff'))
+  $('bannerInstalar').style.display = 'flex';
+
 let promptInstalar = null;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault(); promptInstalar = e; $('instalar').style.display = 'block';
 });
-$('instalar').addEventListener('click', () => {
-  if (promptInstalar) { promptInstalar.prompt(); promptInstalar = null; $('instalar').style.display = 'none'; }
-});
+function instalarApp() {
+  if (promptInstalar) {
+    promptInstalar.prompt();
+    promptInstalar = null;
+    cerrarBannerInstalar();
+    return;
+  }
+  // el navegador no ofrece el diálogo: mostrar instrucciones según plataforma
+  const pasos = esIos
+    ? '1. Toca el botón <b>Compartir</b> (cuadrado con flecha ↑) en la barra de Safari.<br>2. Baja y elige <b>"Añadir a pantalla de inicio"</b>.<br>3. Confirma con <b>Añadir</b>.'
+    : '1. Toca el menú <b>⋮</b> (arriba a la derecha en Chrome).<br>2. Elige <b>"Agregar a la pantalla principal"</b> o <b>"Instalar aplicación"</b>.<br>3. Confirma.';
+  $('contenidoComprador').innerHTML = `<b style="font-size:15px">📲 Cómo instalar Radar MP</b>
+    <div class="hint" style="margin-top:10px;font-size:13px;line-height:2">${pasos}<br><br>
+    Quedará con su ícono propio, pantalla completa y funcionará incluso sin conexión.</div>`;
+  abrirPanel('panelComprador');
+}
+function cerrarBannerInstalar() {
+  $('bannerInstalar').style.display = 'none';
+  localStorage.setItem('radarBannerOff', '1');
+}
+$('instalar').addEventListener('click', instalarApp);
+window.addEventListener('appinstalled', () => { cerrarBannerInstalar(); toast('¡App instalada! 🎉'); });
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 
 cargar();
