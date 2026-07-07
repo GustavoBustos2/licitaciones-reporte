@@ -199,22 +199,50 @@ function htmlCA(x) {
 const PLANTILLAS = {
   '💻 Informática': { claves: 'informatica, computador, notebook, impresora, software, licencia, soporte tecnico, desarrollo de sistema, servidor, redes, toner', excluir: '' },
   '🏗 Construcción': { claves: 'construccion, mejoramiento, reparacion, techumbre, cierre perimetral, hormigon, multicancha, sede social, ampliacion, pintura', excluir: 'arriendo, adquisicion de materiales' },
+  '🔧 Mantención industrial': { claves: 'mantencion industrial, mantenimiento industrial, montaje, montaje mecanico, reparacion mecanica, bombas, valvulas, correas transportadoras, estructura metalica, soldadura, aislacion termica, piping, paradas de planta', excluir: 'arriendo, vehiculo' },
   '🦺 EPP y vestuario': { claves: 'elementos de proteccion, epp, calzado de seguridad, ropa de trabajo, vestuario, uniforme, guantes, casco', excluir: 'teatro, ballet, escolar, arriendo' },
-  '❄ Climatización': { claves: 'climatizacion, aire acondicionado, refrigeracion, calefaccion, camara de frio, caldera, aislacion termica', excluir: 'refrigerador, congelador, arriendo, lena' },
-  '🧹 Aseo y limpieza': { claves: 'aseo, limpieza, sanitizacion, desratizacion, desinsectacion, lavanderia', excluir: 'insumos, articulos de aseo' },
-  '🍽 Alimentación': { claves: 'alimentacion, alimentos, colaciones, abarrotes, banqueteria, coffee break', excluir: '' },
-  '🚌 Transporte': { claves: 'transporte, traslado, flete, buses, transporte escolar', excluir: '' },
+  '❄ Climatización y frío': { claves: 'climatizacion, aire acondicionado, refrigeracion, calefaccion, camara de frio, caldera, aislacion termica', excluir: 'refrigerador, congelador, arriendo, lena' },
+  '⚡ Eléctrico': { claves: 'instalacion electrica, normalizacion electrica, alumbrado, luminarias, tablero electrico, empalme, grupo electrogeno, iluminacion', excluir: 'arriendo' },
+  '🚿 Gasfitería y sanitario': { claves: 'gasfiteria, agua potable, alcantarillado, sanitario, red humeda, red de agua, aguas servidas, canalizacion', excluir: '' },
+  '🛣 Vialidad y pavimentos': { claves: 'pavimento, pavimentacion, asfalto, bacheo, veredas, señaletica, demarcacion, vialidad, calzada', excluir: '' },
+  '🧹 Aseo y limpieza': { claves: 'aseo, limpieza, sanitizacion, desratizacion, desinsectacion, control de plagas, lavanderia', excluir: 'insumos, articulos de aseo' },
+  '🍽 Alimentación': { claves: 'alimentacion, alimentos, colaciones, abarrotes, banqueteria, coffee break, raciones', excluir: '' },
+  '🚌 Transporte': { claves: 'transporte, traslado, flete, buses, transporte escolar, arriendo de vehiculo', excluir: '' },
   '📚 Capacitación': { claves: 'capacitacion, curso, taller, relatoria, charla, diplomado', excluir: '' },
-  '🪑 Oficina': { claves: 'mobiliario, escritorios, sillas, articulos de oficina, papeleria, estantes', excluir: 'arriendo' },
-  '🌳 Áreas verdes': { claves: 'areas verdes, poda, jardines, riego, paisajismo, mantencion de parques', excluir: '' },
-  '📹 Seguridad': { claves: 'vigilancia, guardias, camaras de seguridad, alarmas, control de acceso', excluir: '' },
+  '🪑 Oficina y mobiliario': { claves: 'mobiliario, escritorios, sillas, articulos de oficina, papeleria, estantes', excluir: 'arriendo' },
+  '🌳 Áreas verdes': { claves: 'areas verdes, poda, jardines, riego, paisajismo, mantencion de parques, arborizacion', excluir: '' },
+  '📹 Seguridad y vigilancia': { claves: 'vigilancia, guardias, camaras de seguridad, alarmas, control de acceso, circuito cerrado', excluir: '' },
+  '🩺 Insumos médicos': { claves: 'insumos medicos, dispositivos medicos, medicamentos, insumo clinico, equipamiento medico, farmacia', excluir: '' },
+  '🖨 Imprenta y publicidad': { claves: 'impresion, imprenta, grafica, señaletica, letreros, gigantografia, publicidad, folleteria', excluir: '' },
   '🎪 Eventos': { claves: 'produccion de evento, amplificacion, escenario, carpas, animacion, actividad masiva', excluir: '' },
 };
+function palabras(id) { return $(id).value.split(',').map(s => norm(s.trim())).filter(Boolean); }
+function plClaves(nombre) { return PLANTILLAS[nombre].claves.split(',').map(s => norm(s.trim())).filter(Boolean); }
+function plExcluir(nombre) { return (PLANTILLAS[nombre].excluir || '').split(',').map(s => norm(s.trim())).filter(Boolean); }
 function usarPlantilla(nombre) {
-  const p = PLANTILLAS[nombre];
-  $('pClaves').value = p.claves; $('pExcluir').value = p.excluir;
-  if (!$('pNombre').value.trim()) $('pNombre').value = nombre.replace(/^\S+\s/, '');
-  contarVivo(); toast('Plantilla cargada — edítala a tu medida');
+  const pcl = plClaves(nombre), pex = plExcluir(nombre);
+  let cl = palabras('pClaves'), ex = palabras('pExcluir');
+  const activa = pcl.length && pcl.every(k => cl.includes(k));
+  if (activa) {                       // quitar este rubro
+    cl = cl.filter(k => !pcl.includes(k));
+    ex = ex.filter(k => !pex.includes(k));
+    toast(nombre + ' quitado');
+  } else {                            // sumar este rubro (unión, sin repetir)
+    pcl.forEach(k => { if (!cl.includes(k)) cl.push(k); });
+    pex.forEach(k => { if (!ex.includes(k)) ex.push(k); });
+    if (!$('pNombre').value.trim()) $('pNombre').value = nombre.replace(/^\S+\s/, '');
+    toast(nombre + ' agregado');
+  }
+  $('pClaves').value = cl.join(', ');
+  $('pExcluir').value = ex.join(', ');
+  marcarPlantillas(); contarVivo();
+}
+function marcarPlantillas() {
+  const cl = palabras('pClaves');
+  document.querySelectorAll('#plantillas .chip').forEach(ch => {
+    const pcl = plClaves(ch.dataset.pl);
+    ch.classList.toggle('activo', pcl.length > 0 && pcl.every(k => cl.includes(k)));
+  });
 }
 function contarVivo() {
   const claves = $('pClaves').value.split(',').map(s => norm(s.trim())).filter(Boolean);
@@ -272,8 +300,8 @@ function abrirForm(nombre) {
   $('pClaves').value = p ? p.claves.join(', ') : '';
   $('pExcluir').value = p ? (p.excluir || []).join(', ') : '';
   $('plantillas').innerHTML = Object.keys(PLANTILLAS).map(n =>
-    `<button type="button" class="chip" style="font-size:11px;padding:4px 10px" onclick="usarPlantilla('${n}')">${n}</button>`).join('');
-  contarVivo(); abrirModal('modalPerfil');
+    `<button type="button" class="chip" data-pl="${n}" style="font-size:11px;padding:4px 10px" onclick="usarPlantilla('${n}')">${n}</button>`).join('');
+  marcarPlantillas(); contarVivo(); abrirModal('modalPerfil');
 }
 function pintarEmpresas() {
   const lista = misPerfiles();

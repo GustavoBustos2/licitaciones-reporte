@@ -1,7 +1,7 @@
 /* Radar MP — service worker (red-primero, para que los deploys se vean siempre).
    Estrategia: intenta la red; si falla (offline) usa la caché. Así nunca se queda
    pegado en una versión vieja tras una actualización. */
-const CACHE = 'radar-mp-v13';
+const CACHE = 'radar-mp-v14';
 const SHELL = ['./index.html', './app.js', './manifest.webmanifest', './icon.svg',
                './icon-192.png', './icon-512.png', './terminos.html'];
 
