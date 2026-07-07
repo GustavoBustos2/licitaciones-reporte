@@ -1,5 +1,5 @@
 /* Radar MP — service worker: app usable offline, datos siempre frescos si hay red. */
-const CACHE = 'radar-mp-v9';
+const CACHE = 'radar-mp-v10';
 const SHELL = ['./index.html', './app.js', './manifest.webmanifest', './icon.svg',
                './icon-192.png', './icon-512.png', './terminos.html'];
 

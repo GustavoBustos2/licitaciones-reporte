@@ -331,7 +331,9 @@ function abrirPipeline() {
 /* ---------- precios de mercado + competencia ---------- */
 function filasPreciosDelRubro() {
   const propio = misPerfiles().find(p => p.nombre === rubroActivo);
-  return propio ? precios.filter(r => matchPerfil(propio, r.nombre)) : precios;
+  if (propio) return precios.filter(r => matchPerfil(propio, r.nombre));
+  if (rubroActivo !== 'todos') return precios.filter(r => r.perfil === rubroActivo);
+  return precios;
 }
 function rankingCompetencia(filas) {
   // detalle: "EMPRESA: $1.234.567 ★GANADOR; OTRA: $999.000; ..."
