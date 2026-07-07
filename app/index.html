@@ -13,6 +13,18 @@
   --gris:#5c6b78;--borde:#dbe4ec;--sombra:0 2px 10px rgba(13,59,102,.08)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--fondo);color:var(--tinta)}
+body.oscuro{--fondo:#0f1620;--tinta:#e6edf3;--gris:#9db1c3;--borde:#243447;
+  --sombra:0 2px 10px rgba(0,0,0,.4)}
+body.oscuro .chips,body.oscuro .panel,body.oscuro .card,body.oscuro .buscador input,
+body.oscuro .filtros select,body.oscuro .chip,body.oscuro .acciones button,
+body.oscuro .acciones select,body.oscuro .emp,body.oscuro .emp .btns button{background:#18222e;color:var(--tinta)}
+body.oscuro .card.agil{background:#241f0e;border-color:#5a4d1a}
+body.oscuro details{background:#101822}
+body.oscuro .pie{background:rgba(16,22,30,.94)}
+body.oscuro .pie .conteo-pill{background:#243447;color:#cfe3f5}
+body.oscuro .etapa{background:#18222e}
+body.oscuro .badge{background:#243447;color:#cfe3f5}
+body.oscuro .vacio,body.oscuro .cargando{color:var(--gris)}
 button{font-family:inherit}
 
 header{background:linear-gradient(135deg,var(--azul) 0%,var(--azul2) 100%);color:#fff;
@@ -223,6 +235,38 @@ table.precios td{border-bottom:1px solid var(--borde);padding:6px;vertical-align
   <div id="contenidoComprador"></div>
 </div>
 
+<div class="panel" id="panelStats">
+  <button class="cerrar" onclick="cerrarPaneles()">✕</button>
+  <b style="font-size:16px">📈 Mis números</b>
+  <div id="contenidoStats"></div>
+</div>
+
+<div class="panel" id="panelAyuda">
+  <button class="cerrar" onclick="cerrarPaneles()">✕</button>
+  <b style="font-size:16px">❓ Cómo usar Radar MP</b>
+  <div class="hint" style="font-size:12.5px;line-height:1.9;margin-top:10px">
+  <b>1. Crea tu empresa</b> — chip "➕ Mi empresa": elige una plantilla de tu rubro o escribe tus
+  palabras clave. El contador te dice cuánto mercado abre cada combinación.<br>
+  <b>2. Revisa a diario</b> — los datos se renuevan solos durante todo el día. El filtro
+  "★ Nuevas" muestra lo que apareció hoy.<br>
+  <b>3. Las tarjetas amarillas ⚡ son Compra Ágil</b> — cotizaciones rápidas sin garantías que
+  cierran en 2-5 días. Mira "Ver ficha", copia el código con 📋 y cotiza en mercadopublico.cl
+  con tu cuenta de proveedor. La que dice <b>0 ofertas</b> es tu mejor chance.<br>
+  <b>4. Gestiona tu pipeline</b> — en cada tarjeta marca la etapa (Evaluando → Enviada →
+  Ganada/Perdida). El botón 📊 te muestra el embudo y 📈 tus números.<br>
+  <b>5. Cotiza con datos</b> — el botón 💰 muestra a qué precios se está ganando en tu rubro y
+  quién es tu competencia.<br>
+  <b>6. No pierdas plazos</b> — el botón 🗓 de cada tarjeta agrega el cierre a tu calendario
+  con alarma. Y 🤖 IA te prepara el análisis de la oportunidad.</div>
+  <div class="botones">
+    <button style="background:#e8eef4" onclick="toggleTema()">🌓 Modo oscuro/claro</button>
+    <button style="background:#e8eef4" onclick="instalarApp()">📲 Instalar app</button>
+  </div>
+  <div class="hint" style="margin-top:10px">
+  <a href="terminos.html">Términos y privacidad</a> ·
+  <a href="mailto:gustavoandred15@gmail.com?subject=Sugerencia%20Radar%20MP">Enviar sugerencia</a></div>
+</div>
+
 <div class="buscador"><input id="fTexto" placeholder="🔎 Buscar por texto libre (ej: guantes, techumbre...)" oninput="renderDesdeCero()"></div>
 <div class="filtros">
   <select id="fTipo" onchange="renderDesdeCero()">
@@ -236,6 +280,11 @@ table.precios td{border-bottom:1px solid var(--borde);padding:6px;vertical-align
     <option value="chico">Hasta $5M</option>
     <option value="medio">$5M – $50M</option>
     <option value="grande">Más de $50M</option>
+  </select>
+  <select id="fOrden" onchange="renderDesdeCero()">
+    <option value="cierre">⏱ Por cierre</option>
+    <option value="chance">💡 Mejor oportunidad</option>
+    <option value="monto">💵 Mayor monto</option>
   </select>
   <select id="fVer" onchange="renderDesdeCero()">
     <option value="activas">Activas</option>
@@ -253,9 +302,9 @@ table.precios td{border-bottom:1px solid var(--borde);padding:6px;vertical-align
 <div class="pie">
   <span class="conteo-pill" id="conteo">—</span>
   <button onclick="abrirPipeline()" title="Mi pipeline">📊</button>
-  <button id="btnPrecios" onclick="abrirPrecios()" title="Precios de mercado">💰</button>
-  <a href="terminos.html" class="suave" title="Términos">ℹ️</a>
-  <a href="mailto:gustavoandred15@gmail.com?subject=Sugerencia%20Radar%20MP" title="Sugerencias">💬</a>
+  <button id="btnPrecios" onclick="abrirPrecios()" title="Precios y competencia">💰</button>
+  <button onclick="abrirStats()" title="Mis números">📈</button>
+  <button onclick="abrirPanel('panelAyuda')" title="Ayuda" style="background:#e8eef4;color:#33475b">❓</button>
   <button id="instalar">📲 Instalar</button>
 </div>
 <div class="toast" id="toast"></div>

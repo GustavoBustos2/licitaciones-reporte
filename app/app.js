@@ -4,6 +4,7 @@ const FUENTES = ['../datos/ingenieria-dek.json', '../datos/friometal.json'];
 const G_LIC = '../datos/global_licitaciones.json';
 const G_CA = '../datos/global_compra_agil.json';
 const G_PRECIOS = '../datos/precios.json';
+const G_ADJUD = ['../datos/adjud-ing.json', '../datos/adjud-friometal.json'];
 const KEY_MARCAS = 'radarMarcas';
 const KEY_VISITA = 'radarUltimaVisita';
 const KEY_PERFILES = 'radarPerfiles';
@@ -12,7 +13,7 @@ const PAGINA = 40;
 const ETAPAS = { EVALUANDO: '🟡 Evaluando', PREPARANDO: '🟠 Preparando', ENVIADA: '🔵 Enviada',
                  GANADA: '🟢 Ganada', PERDIDA: '⚪ Perdida', DESCARTADA: '✖ Descartada' };
 
-let perfiles = [], globalLic = [], globalCA = [], precios = [];
+let perfiles = [], globalLic = [], globalCA = [], precios = [], adjud = [];
 let rubroActivo = 'todos', generado = '', limite = PAGINA;
 
 const $ = id => document.getElementById(id);
@@ -117,10 +118,16 @@ function verComprador(nombre) {
   perfiles.forEach(p => [...p.licitaciones, ...p.compra_agil].forEach(it => { if (it.organismo === n) enPerfiles++; }));
   const montos = enCA.map(it => it.m).filter(m => m > 0);
   const prom = montos.length ? '$' + Math.round(montos.reduce((a, b) => a + b, 0) / montos.length).toLocaleString('es-CL') : 's/i';
+  const suyas = adjud.filter(a => a.organismo === n).slice(0, 5);
+  const historial = suyas.length
+    ? '<br><b>Últimas adjudicaciones de este comprador:</b><br>' + suyas.map(a =>
+        `• ${a.nombre.slice(0, 45)} → <b>${(a.ganador || 's/i').slice(0, 30)}</b>` +
+        (a.monto ? ` ($${Math.round(a.monto).toLocaleString('es-CL')})` : '')).join('<br>')
+    : '';
   $('contenidoComprador').innerHTML = `<b style="font-size:14px">🏛 ${n}</b>
     <div class="hint" style="margin-top:8px;font-size:12.5px;line-height:1.7">
     • Compras ágiles abiertas ahora: <b>${abiertas}</b> (monto promedio: <b>${prom}</b>)<br>
-    • Apariciones en los rubros monitoreados: <b>${enPerfiles}</b><br><br>
+    • Apariciones en los rubros monitoreados: <b>${enPerfiles}</b>${historial}<br><br>
     Un comprador con compras frecuentes de tu rubro es un cliente para cultivar: gana una chica,
     cumple impecable, y las siguientes se inclinan a tu favor.</div>`;
   abrirPanel('panelComprador');
@@ -317,6 +324,41 @@ function importarEmpresas() {
   } catch (e) { toast('Código inválido'); }
 }
 
+/* ---------- estadísticas personales ---------- */
+function abrirStats() {
+  const m = marcas();
+  const conteo = {};
+  Object.values(m).forEach(v => conteo[v] = (conteo[v] || 0) + 1);
+  const enviadas = (conteo.ENVIADA || 0) + (conteo.GANADA || 0) + (conteo.PERDIDA || 0);
+  const cerradas = (conteo.GANADA || 0) + (conteo.PERDIDA || 0);
+  const tasa = cerradas ? Math.round((conteo.GANADA || 0) / cerradas * 100) : null;
+  // monto estimado de las ganadas que aún están en los datos
+  const montoPor = {};
+  perfiles.forEach(p => [...p.licitaciones, ...p.compra_agil].forEach(it => { if (it.monto) montoPor[it.codigo] = it.monto; }));
+  globalCA.forEach(g => { if (g.m) montoPor[g.c] = g.m; });
+  let ganado = 0;
+  Object.entries(m).forEach(([cod, v]) => { if (v === 'GANADA' && montoPor[cod]) ganado += montoPor[cod]; });
+  $('contenidoStats').innerHTML = `
+    <div class="embudo" style="margin-top:12px">
+      <div class="etapa"><b>${Object.keys(m).length}</b><span>gestionadas</span></div>
+      <div class="etapa"><b>${enviadas}</b><span>ofertas enviadas</span></div>
+      <div class="etapa"><b>${conteo.GANADA || 0}</b><span>ganadas 🏆</span></div>
+      <div class="etapa"><b>${tasa === null ? '—' : tasa + '%'}</b><span>tasa de éxito</span></div>
+    </div>
+    ${ganado ? `<div class="hint" style="margin-top:12px;font-size:13px">💰 Monto referencial ganado:
+      <b>$${Math.round(ganado).toLocaleString('es-CL')}</b></div>` : ''}
+    <div class="hint" style="margin-top:10px">La tasa de éxito se calcula sobre las que marcaste
+    Ganada o Perdida. En Compra Ágil una tasa del 10-20% ya es buen negocio — el volumen manda.</div>`;
+  abrirPanel('panelStats');
+}
+
+/* ---------- tema oscuro ---------- */
+function toggleTema() {
+  const oscuro = document.body.classList.toggle('oscuro');
+  localStorage.setItem('radarTema', oscuro ? 'oscuro' : 'claro');
+}
+if (localStorage.getItem('radarTema') === 'oscuro') document.body.classList.add('oscuro');
+
 /* ---------- pipeline ---------- */
 function abrirPipeline() {
   const m = marcas();
@@ -355,12 +397,29 @@ function abrirPrecios(vista) {
   const filas = filasPreciosDelRubro();
   const propio = misPerfiles().find(p => p.nombre === rubroActivo);
   const contexto = propio ? `de <b>${propio.nombre}</b>` : 'de todos los rubros monitoreados';
-  const tabs = `<div style="display:flex;gap:8px;margin:10px 0 4px">
-    <button class="chip ${vista !== 'comp' ? 'activo' : ''}" onclick="abrirPrecios()">💰 Procesos y precios</button>
-    <button class="chip ${vista === 'comp' ? 'activo' : ''}" onclick="abrirPrecios('comp')">🥊 Tu competencia</button></div>
-    <div class="hint">Basado en compras ágiles recién adjudicadas ${contexto}. Se actualiza solo cada día.</div>`;
+  const tabs = `<div style="display:flex;gap:8px;margin:10px 0 4px;flex-wrap:wrap">
+    <button class="chip ${!vista ? 'activo' : ''}" onclick="abrirPrecios()">💰 Precios</button>
+    <button class="chip ${vista === 'comp' ? 'activo' : ''}" onclick="abrirPrecios('comp')">🥊 Competencia</button>
+    <button class="chip ${vista === 'adj' ? 'activo' : ''}" onclick="abrirPrecios('adj')">🏆 Licitaciones ganadas</button></div>
+    <div class="hint">Basado en procesos recién adjudicados ${contexto}. Se actualiza solo cada día.</div>`;
 
   let cuerpo;
+  if (vista === 'adj') {
+    const propioA = misPerfiles().find(p => p.nombre === rubroActivo);
+    let filasA = adjud;
+    if (propioA) filasA = adjud.filter(r => matchPerfil(propioA, r.nombre));
+    else if (rubroActivo !== 'todos') filasA = adjud.filter(r => r.perfil === rubroActivo);
+    cuerpo = filasA.length
+      ? `<table class="precios"><tr><th>Fecha</th><th>Licitación</th><th>Ganador</th><th>Monto</th></tr>` +
+        filasA.slice(0, 30).map(r =>
+          `<tr><td>${r.fecha}</td><td>${r.nombre.slice(0, 50)}</td>
+           <td><b>${(r.ganador || 's/i').slice(0, 30)}</b></td>
+           <td>${r.monto ? '$' + Math.round(r.monto).toLocaleString('es-CL') : 's/i'}</td></tr>`).join('') + '</table>'
+      : '<div class="hint" style="margin-top:10px">Aún recolectando adjudicaciones de este rubro — se llena solo día a día.</div>';
+    $('contenidoPrecios').innerHTML = tabs + cuerpo;
+    abrirPanel('panelPrecios');
+    return;
+  }
   if (!filas.length) {
     cuerpo = '<div class="hint" style="margin-top:10px">Aún estamos recolectando procesos adjudicados de tu rubro. Esta sección se llena sola día a día.</div>';
   } else if (vista === 'comp') {
@@ -432,7 +491,27 @@ function render() {
     if (ETAPAS[ver] && x.marca !== ver) return false;
     return true;
   });
-  items.sort((a, b) => (a.it.cierre || '9999').localeCompare(b.it.cierre || '9999'));
+  const orden = $('fOrden') ? $('fOrden').value : 'cierre';
+  if (orden === 'monto') {
+    items.sort((a, b) => (b.it.monto || 0) - (a.it.monto || 0));
+  } else if (orden === 'chance') {
+    const score = x => {
+      let s = 0;
+      if (x.esCA) {
+        const of = parseInt(x.it.ofertas) || 0;
+        s += of === 0 ? 30 : Math.max(0, 18 - of * 5);
+        if (x.dias !== null && x.dias <= 2) s += 12; else if (x.dias !== null && x.dias <= 5) s += 6;
+      } else {
+        if (x.it.nueva) s += 12;
+        if (x.dias !== null && x.dias >= 5) s += 8;
+      }
+      if (x.it.monto) s += Math.min(15, x.it.monto / 1e6);
+      return s;
+    };
+    items.sort((a, b) => score(b) - score(a));
+  } else {
+    items.sort((a, b) => (a.it.cierre || '9999').localeCompare(b.it.cierre || '9999'));
+  }
 
   const visibles = items.slice(0, limite);
   let html = visibles.map(x => x.esCA ? htmlCA(x) : htmlLic(x)).join('');
@@ -482,11 +561,12 @@ function avisarNovedades() {
 }
 
 async function cargar() {
-  const [curados, gl, gc, pr] = await Promise.allSettled([
+  const [curados, gl, gc, pr, adj] = await Promise.allSettled([
     Promise.allSettled(FUENTES.map(u => fetch(u + '?t=' + Date.now()).then(r => r.json()))),
     fetch(G_LIC + '?t=' + Date.now()).then(r => r.json()),
     fetch(G_CA + '?t=' + Date.now()).then(r => r.json()),
     fetch(G_PRECIOS + '?t=' + Date.now()).then(r => r.json()),
+    Promise.allSettled(G_ADJUD.map(u => fetch(u + '?t=' + Date.now()).then(r => r.json()))),
   ]);
   perfiles = [];
   if (curados.status === 'fulfilled')
@@ -498,6 +578,11 @@ async function cargar() {
   globalLic = gl.status === 'fulfilled' ? (gl.value.items || []) : [];
   globalCA = gc.status === 'fulfilled' ? (gc.value.items || []) : [];
   precios = pr.status === 'fulfilled' ? (pr.value.items || []) : [];
+  adjud = [];
+  if (adj.status === 'fulfilled')
+    for (const r of adj.value)
+      if (r.status === 'fulfilled') adjud.push(...(r.value.items || []));
+  adjud.sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
   $('actualizado').textContent = perfiles.length
     ? `Actualizado: ${generado} · ${globalLic.length.toLocaleString('es-CL')} licitaciones y ${globalCA.length.toLocaleString('es-CL')} compras ágiles activas en Chile`
     : 'No se pudieron cargar los datos — revisa tu conexión';
