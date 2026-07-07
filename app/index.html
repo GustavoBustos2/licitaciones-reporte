@@ -9,93 +9,138 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
-:root{--azul:#0d3b66;--fondo:#f2f5f8;--tinta:#1a2733;--gris:#5c6b78}
+:root{--azul:#0d3b66;--azul2:#155a8a;--acento:#f0c419;--fondo:#eef2f6;--tinta:#17202a;
+  --gris:#5c6b78;--borde:#dbe4ec;--sombra:0 2px 10px rgba(13,59,102,.08)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;background:var(--fondo);color:var(--tinta)}
-header{background:var(--azul);color:#fff;padding:14px 16px 10px;position:sticky;top:0;z-index:10}
-header h1{margin:0;font-size:18px;display:flex;align-items:center;gap:8px}
-.sub{font-size:11px;opacity:.75;margin-top:2px}
-.aviso-nuevas{background:#ffd700;color:#4a3800;font-weight:700;font-size:12px;
-  border-radius:10px;padding:4px 10px;display:inline-block;margin-top:6px}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 16px;background:#fff;
-  border-bottom:1px solid #dde5ec;scrollbar-width:none}
+body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--fondo);color:var(--tinta)}
+button{font-family:inherit}
+
+header{background:linear-gradient(135deg,var(--azul) 0%,var(--azul2) 100%);color:#fff;
+  padding:16px 18px 12px;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px rgba(13,59,102,.35)}
+header h1{margin:0;font-size:19px;display:flex;align-items:center;gap:8px;letter-spacing:.3px}
+.beta{font-size:9.5px;background:var(--acento);color:#4a3800;border-radius:8px;padding:2px 8px;
+  font-weight:800;letter-spacing:.5px}
+.sub{font-size:11px;opacity:.8;margin-top:3px}
+.aviso-nuevas{background:var(--acento);color:#4a3800;font-weight:700;font-size:12px;
+  border-radius:12px;padding:5px 12px;display:inline-block;margin-top:8px;
+  box-shadow:0 2px 6px rgba(0,0,0,.25)}
+
+.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 16px;background:#fff;
+  border-bottom:1px solid var(--borde);scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
-.chip{white-space:nowrap;border:1px solid #c3d0dc;border-radius:16px;padding:6px 14px;
-  font-size:13px;background:#fff;color:var(--tinta);cursor:pointer}
-.chip.activo{background:var(--azul);color:#fff;border-color:var(--azul)}
-.chip.crear{border-style:dashed;color:var(--azul);font-weight:600}
-.chip.propio{border-color:#f0c419;background:#fffbe6}
-.chip.propio.activo{background:var(--azul);color:#fff}
-.buscador{padding:8px 16px 0}
-.buscador input{width:100%;padding:10px 14px;border:1px solid #c3d0dc;border-radius:12px;font-size:14px}
-.panel{background:#fff;margin:10px 16px;padding:14px;border-radius:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,.12);display:none}
-.panel .cerrar{float:right;border:none;background:none;font-size:18px;cursor:pointer}
-.panel label{font-size:12px;font-weight:600;display:block;margin:8px 0 3px}
-.panel input{width:100%;padding:9px;border:1px solid #c3d0dc;border-radius:8px;font-size:14px}
-.hint{font-size:11px;color:var(--gris);margin-top:2px}
-.botones{display:flex;gap:8px;margin-top:12px}
-.botones button{flex:1;padding:10px;border-radius:9px;border:none;font-size:13px;font-weight:600;cursor:pointer}
-.emp{border:1px solid #dde5ec;border-radius:10px;padding:10px 12px;margin-top:10px}
-.emp .kw{font-size:11.5px;color:var(--gris);margin:4px 0}
-.emp .stats{font-size:12px;color:#0d3b66;font-weight:600;margin:4px 0}
-.emp .btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
-.emp .btns button{font-size:11.5px;padding:5px 10px;border-radius:8px;border:1px solid #c3d0dc;background:#fff;cursor:pointer}
-.embudo{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.etapa{flex:1;min-width:90px;background:#f2f5f8;border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer}
-.etapa b{display:block;font-size:20px;color:var(--azul)}
-.etapa span{font-size:10.5px;color:var(--gris)}
-.filtros{display:flex;gap:8px;padding:8px 16px;flex-wrap:wrap;align-items:center;font-size:12px}
-.filtros select{font-size:12px;padding:5px 8px;border-radius:8px;border:1px solid #c3d0dc;background:#fff;max-width:46vw}
-.lista{padding:4px 12px 110px;display:flex;flex-direction:column;gap:10px}
-.card{background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 1px 3px rgba(0,0,0,.08);
-  border-left:5px solid #999;display:flex;flex-direction:column;gap:6px}
+.chip{white-space:nowrap;border:1.5px solid var(--borde);border-radius:20px;padding:7px 15px;
+  font-size:13px;background:#fff;color:var(--tinta);cursor:pointer;font-weight:500;
+  transition:all .15s}
+.chip.activo{background:var(--azul);color:#fff;border-color:var(--azul);
+  box-shadow:0 3px 8px rgba(13,59,102,.3)}
+.chip.crear{border-style:dashed;border-color:var(--azul);color:var(--azul);font-weight:700}
+.chip.propio{border-color:var(--acento);background:#fffbea}
+.chip.propio.activo{background:var(--azul);color:#fff;border-color:var(--azul)}
+
+.buscador{padding:10px 16px 0}
+.buscador input{width:100%;padding:11px 16px;border:1.5px solid var(--borde);border-radius:14px;
+  font-size:14px;background:#fff;box-shadow:var(--sombra);outline:none;transition:border .15s}
+.buscador input:focus{border-color:var(--azul2)}
+
+.panel{background:#fff;margin:12px 16px;padding:16px;border-radius:16px;
+  box-shadow:0 6px 24px rgba(13,59,102,.16);display:none}
+.panel .cerrar{float:right;border:none;background:#eef2f6;border-radius:50%;width:30px;height:30px;
+  font-size:14px;cursor:pointer;color:var(--gris)}
+.panel label{font-size:12px;font-weight:600;display:block;margin:10px 0 4px;color:var(--azul)}
+.panel input{width:100%;padding:10px 12px;border:1.5px solid var(--borde);border-radius:10px;
+  font-size:14px;outline:none}
+.panel input:focus{border-color:var(--azul2)}
+.hint{font-size:11px;color:var(--gris);margin-top:3px;line-height:1.5}
+.botones{display:flex;gap:8px;margin-top:14px}
+.botones button{flex:1;padding:11px;border-radius:11px;border:none;font-size:13px;font-weight:700;cursor:pointer}
+
+.emp{border:1.5px solid var(--borde);border-radius:12px;padding:12px 14px;margin-top:10px;background:#fbfdfe}
+.emp .kw{font-size:11.5px;color:var(--gris);margin:5px 0;line-height:1.5}
+.emp .stats{font-size:12.5px;color:var(--azul);font-weight:700;margin:5px 0}
+.emp .btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.emp .btns button{font-size:11.5px;padding:6px 11px;border-radius:9px;border:1px solid var(--borde);
+  background:#fff;cursor:pointer;font-weight:600}
+
+.embudo{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.etapa{flex:1;min-width:92px;background:linear-gradient(180deg,#f6f9fc,#eef2f6);border-radius:14px;
+  padding:12px 8px;text-align:center;cursor:pointer;border:1.5px solid var(--borde);transition:transform .1s}
+.etapa:active{transform:scale(.96)}
+.etapa b{display:block;font-size:22px;color:var(--azul)}
+.etapa span{font-size:10.5px;color:var(--gris);font-weight:600}
+
+.filtros{display:flex;gap:8px;padding:10px 16px;flex-wrap:wrap;align-items:center;font-size:12px}
+.filtros select{font-size:12px;padding:7px 10px;border-radius:10px;border:1.5px solid var(--borde);
+  background:#fff;max-width:46vw;font-weight:600;color:var(--tinta);box-shadow:var(--sombra)}
+
+.lista{padding:4px 14px 120px;display:flex;flex-direction:column;gap:12px}
+.card{background:#fff;border-radius:16px;padding:14px 16px;box-shadow:var(--sombra);
+  border-left:6px solid #9aa7b2;display:flex;flex-direction:column;gap:7px}
 .card.urgente{border-left-color:#d62828}.card.pronto{border-left-color:#f77f00}.card.holgado{border-left-color:#2a9d8f}
-.card.agil{background:#fffbe6;border:1px solid #edd98a;border-left-width:5px}
-.card.e-EVALUANDO{outline:3px solid #ffd700}
+.card.agil{background:linear-gradient(180deg,#fffdf2,#fff8dd);border:1px solid #eedd9a;border-left:6px solid #eedd9a}
+.card.agil.urgente{border-left-color:#d62828}.card.agil.pronto{border-left-color:#f77f00}.card.agil.holgado{border-left-color:#2a9d8f}
+.card.e-EVALUANDO{outline:3px solid var(--acento)}
 .card.e-PREPARANDO{outline:3px solid #f77f00}
-.card.e-ENVIADA{outline:3px solid #0d3b66}
-.card.e-GANADA{outline:3px solid #2a9d8f;background:#e6f7ec}
-.card.e-PERDIDA{opacity:.55}
-.card h3{margin:0;font-size:14px;line-height:1.35}
+.card.e-ENVIADA{outline:3px solid var(--azul)}
+.card.e-GANADA{outline:3px solid #2a9d8f;background:#e9f9f0}
+.card.e-PERDIDA{opacity:.5}
+.card h3{margin:0;font-size:14.5px;line-height:1.4;font-weight:600}
 .card h3 a{color:var(--azul);text-decoration:none}
 .badges{display:flex;gap:5px;flex-wrap:wrap}
-.badge{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:9px;background:#e3e9ef;color:#33475b}
+.badge{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:10px;background:#e8eef4;color:#33475b}
 .badge.rojo{background:#d62828;color:#fff}.badge.naranjo{background:#f77f00;color:#fff}
 .badge.verde{background:#2a9d8f;color:#fff}.badge.azul{background:var(--azul);color:#fff}
-.badge.oro{background:#ffd700;color:#4a3800}.badge.agil{background:#f0c419;color:#4a3800}
-.meta{font-size:11.5px;color:var(--gris)}
-.meta .org{color:var(--azul);text-decoration:underline dotted;cursor:pointer}
-details{font-size:12px;color:var(--gris)}
-details summary{color:var(--azul);font-weight:600;cursor:pointer}
-.acciones{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px;align-items:center}
-.acciones button,.acciones select{font-size:12px;padding:6px 10px;border-radius:9px;border:1px solid #c3d0dc;
-  background:#fff;cursor:pointer}
-.acciones select.estado{font-weight:600;max-width:150px}
-.vacio{text-align:center;color:var(--gris);padding:40px 20px;font-size:14px}
-.mas{margin:6px auto 0;display:block;background:var(--azul);color:#fff;border:none;
-  border-radius:12px;padding:11px 26px;font-size:13px;font-weight:600;cursor:pointer}
-.pie{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dde5ec;
-  padding:8px 16px calc(8px + env(safe-area-inset-bottom));font-size:11px;color:var(--gris);
+.badge.oro{background:var(--acento);color:#4a3800}.badge.agil{background:var(--acento);color:#4a3800}
+.meta{font-size:11.5px;color:var(--gris);line-height:1.5}
+.meta .org{color:var(--azul2);text-decoration:underline dotted;cursor:pointer}
+details{font-size:12px;color:var(--gris);background:#f6f9fc;border-radius:10px;padding:7px 10px}
+.card.agil details{background:rgba(255,255,255,.6)}
+details summary{color:var(--azul);font-weight:700;cursor:pointer}
+details div,details b{line-height:1.55}
+.acciones{display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;align-items:center}
+.acciones button,.acciones select{font-size:12px;padding:7px 11px;border-radius:10px;
+  border:1px solid var(--borde);background:#fff;cursor:pointer;font-weight:600;color:var(--tinta)}
+.acciones button:active{background:#e8eef4}
+.acciones select.estado{font-weight:700;max-width:150px;color:var(--azul)}
+
+.vacio{text-align:center;color:var(--gris);padding:50px 20px;font-size:14px;line-height:1.7}
+.vacio::before{content:"🔍";display:block;font-size:42px;margin-bottom:8px}
+.cargando{text-align:center;color:var(--gris);padding:50px 20px;font-size:13px}
+.cargando::before{content:"📡";display:block;font-size:42px;margin-bottom:10px;
+  animation:pulso 1.2s infinite}
+@keyframes pulso{50%{opacity:.35}}
+.mas{margin:8px auto 0;display:block;background:var(--azul);color:#fff;border:none;
+  border-radius:14px;padding:12px 28px;font-size:13px;font-weight:700;cursor:pointer;
+  box-shadow:0 4px 12px rgba(13,59,102,.3)}
+
+.pie{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);
+  backdrop-filter:blur(10px);border-top:1px solid var(--borde);
+  padding:9px 16px calc(9px + env(safe-area-inset-bottom));font-size:11px;color:var(--gris);
   display:flex;justify-content:space-between;align-items:center;gap:8px}
-.pie button,.pie a{background:var(--azul);color:#fff;border:none;border-radius:9px;padding:7px 12px;
-  font-size:11px;font-weight:600;text-decoration:none;white-space:nowrap;cursor:pointer}
-#instalar{display:none}
+.pie .conteo-pill{background:#e8eef4;color:var(--azul);font-weight:700;border-radius:12px;
+  padding:6px 12px;font-size:11.5px;white-space:nowrap}
+.pie button,.pie a{background:var(--azul);color:#fff;border:none;border-radius:10px;padding:8px 12px;
+  font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;cursor:pointer}
+.pie a.suave{background:#e8eef4;color:#33475b}
+#instalar{display:none;background:var(--acento);color:#4a3800}
 .hint-ios{display:none;background:#fff8e1;border-top:1px solid #e6c95c;padding:8px 16px;
-  font-size:12px;color:#5c4400;position:fixed;bottom:44px;left:0;right:0}
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1a2733;color:#fff;
-  padding:9px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:50}
-.toast.ver{opacity:.95}
-.overlay{position:fixed;inset:0;background:var(--azul);color:#fff;z-index:100;display:none;
-  flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:30px}
-.overlay img{width:90px;margin-bottom:14px}
-.overlay h2{margin:0 0 6px;font-size:24px}
-.overlay p{font-size:14px;opacity:.85;max-width:340px;line-height:1.5}
-.overlay button{width:100%;max-width:320px;padding:14px;border:none;border-radius:12px;
-  font-size:15px;font-weight:700;margin-top:10px;cursor:pointer}
-table.precios{border-collapse:collapse;width:100%;margin-top:8px;font-size:11.5px}
-table.precios th{background:var(--azul);color:#fff;padding:4px 6px;text-align:left;font-size:10.5px}
-table.precios td{border-bottom:1px solid #e3e9ef;padding:5px 6px;vertical-align:top}
+  font-size:12px;color:#5c4400;position:fixed;bottom:48px;left:0;right:0}
+.toast{position:fixed;bottom:95px;left:50%;transform:translateX(-50%);background:#17202a;color:#fff;
+  padding:10px 20px;border-radius:22px;font-size:13px;opacity:0;transition:opacity .3s;
+  pointer-events:none;z-index:50;box-shadow:0 6px 20px rgba(0,0,0,.3);max-width:85vw;text-align:center}
+.toast.ver{opacity:.97}
+.overlay{position:fixed;inset:0;background:linear-gradient(150deg,var(--azul),var(--azul2));color:#fff;
+  z-index:100;display:none;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:30px}
+.overlay img{width:96px;margin-bottom:16px;border-radius:22px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.overlay h2{margin:0 0 8px;font-size:26px;letter-spacing:.5px}
+.overlay p{font-size:14px;opacity:.85;max-width:340px;line-height:1.6}
+.overlay button{width:100%;max-width:320px;padding:15px;border:none;border-radius:14px;
+  font-size:15px;font-weight:800;margin-top:12px;cursor:pointer}
+table.precios{border-collapse:collapse;width:100%;margin-top:10px;font-size:11.5px}
+table.precios th{background:var(--azul);color:#fff;padding:6px;text-align:left;font-size:10.5px}
+table.precios th:first-child{border-radius:8px 0 0 0}
+table.precios th:last-child{border-radius:0 8px 0 0}
+table.precios td{border-bottom:1px solid var(--borde);padding:6px;vertical-align:top;line-height:1.45}
 </style>
 </head>
 <body>
@@ -104,11 +149,11 @@ table.precios td{border-bottom:1px solid #e3e9ef;padding:5px 6px;vertical-align:
   <h2>Radar MP</h2>
   <p>Todas las licitaciones y compras ágiles del Estado de Chile, filtradas para tu empresa
   y actualizadas durante todo el día.</p>
-  <button style="background:#f0c419;color:#4a3800" onclick="empezar(true)">🏢 Crear el perfil de mi empresa</button>
+  <button style="background:var(--acento);color:#4a3800" onclick="empezar(true)">🏢 Crear el perfil de mi empresa</button>
   <button style="background:rgba(255,255,255,.15);color:#fff" onclick="empezar(false)">Explorar rubros de ejemplo</button>
 </div>
 <header>
-  <h1>📡 Radar MP <span style="font-size:10px;background:#f0c419;color:#4a3800;border-radius:8px;padding:2px 8px">BETA</span></h1>
+  <h1>📡 Radar MP <span class="beta">BETA</span></h1>
   <div class="sub" id="actualizado">cargando datos...</div>
   <div class="aviso-nuevas" id="avisoNuevas" style="display:none"></div>
 </header>
@@ -116,9 +161,9 @@ table.precios td{border-bottom:1px solid #e3e9ef;padding:5px 6px;vertical-align:
 
 <div class="panel" id="formPerfil">
   <button class="cerrar" onclick="cerrarPaneles()">✕</button>
-  <b style="font-size:14px">🏢 Perfil de mi empresa</b>
+  <b style="font-size:15px">🏢 Perfil de mi empresa</b>
   <div class="hint" style="margin-top:6px">¿No sabes qué palabras poner? Parte de una plantilla y ajústala:</div>
-  <div id="plantillas" style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 2px"></div>
+  <div id="plantillas" style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 2px"></div>
   <label>Nombre de la empresa o rubro</label>
   <input id="pNombre" placeholder="Ej: Constructora Los Andes">
   <label>Palabras clave (separadas por coma)</label>
@@ -129,20 +174,20 @@ table.precios td{border-bottom:1px solid #e3e9ef;padding:5px 6px;vertical-align:
   <div class="hint" id="contadorVivo" style="margin-top:8px;font-size:12px"></div>
   <div class="botones">
     <button style="background:var(--azul);color:#fff" onclick="guardarPerfil()">Guardar y buscar</button>
-    <button style="background:#e3e9ef" onclick="cerrarPaneles()">Cancelar</button>
+    <button style="background:#e8eef4" onclick="cerrarPaneles()">Cancelar</button>
   </div>
 </div>
 
 <div class="panel" id="panelEmpresas">
   <button class="cerrar" onclick="cerrarPaneles()">✕</button>
-  <b style="font-size:15px">🏢 Mis empresas</b>
+  <b style="font-size:16px">🏢 Mis empresas</b>
   <div class="hint">Crea todas las empresas o combinaciones de palabras que quieras — quedan guardadas
   en este dispositivo y cada una busca por separado en todo Chile.</div>
   <div id="listaEmpresas"></div>
   <div class="botones">
     <button style="background:var(--azul);color:#fff" onclick="cerrarPaneles();abrirForm()">➕ Crear otra</button>
-    <button style="background:#e3e9ef" onclick="exportarEmpresas()">⬆ Exportar</button>
-    <button style="background:#e3e9ef" onclick="importarEmpresas()">⬇ Importar</button>
+    <button style="background:#e8eef4" onclick="exportarEmpresas()">⬆ Exportar</button>
+    <button style="background:#e8eef4" onclick="importarEmpresas()">⬇ Importar</button>
   </div>
   <div class="hint">Exportar copia un código con todas tus empresas para pasarlas a otro teléfono
   (ahí usas Importar) o como respaldo.</div>
@@ -150,7 +195,7 @@ table.precios td{border-bottom:1px solid #e3e9ef;padding:5px 6px;vertical-align:
 
 <div class="panel" id="panelPipeline">
   <button class="cerrar" onclick="cerrarPaneles()">✕</button>
-  <b style="font-size:15px">📊 Mi pipeline</b>
+  <b style="font-size:16px">📊 Mi pipeline</b>
   <div class="hint">Tus oportunidades por etapa. Toca una etapa para ver su lista.
   El estado se cambia en cada tarjeta con el selector "Etapa".</div>
   <div class="embudo" id="embudo"></div>
@@ -158,7 +203,7 @@ table.precios td{border-bottom:1px solid #e3e9ef;padding:5px 6px;vertical-align:
 
 <div class="panel" id="panelPrecios">
   <button class="cerrar" onclick="cerrarPaneles()">✕</button>
-  <b style="font-size:15px">💰 Precios de mercado (Compra Ágil)</b>
+  <b style="font-size:16px">💰 Precios de mercado (Compra Ágil)</b>
   <div class="hint">Procesos recién adjudicados de tu rubro: cuántos cotizaron, el rango de ofertas
   y a cuánto ganó el seleccionado. Úsalo para calibrar tus precios.</div>
   <div id="contenidoPrecios"></div>
@@ -194,14 +239,14 @@ table.precios td{border-bottom:1px solid #e3e9ef;padding:5px 6px;vertical-align:
     <option value="todas">Todas</option>
   </select>
 </div>
-<div class="lista" id="lista"></div>
+<div class="lista" id="lista"><div class="cargando">Buscando oportunidades en todo Chile…</div></div>
 <div class="hint-ios" id="hintIos">📲 En iPhone: toca <b>Compartir</b> y luego <b>"Añadir a pantalla de inicio"</b> para instalar la app.</div>
 <div class="pie">
-  <span id="conteo"></span>
-  <button onclick="abrirPipeline()">📊</button>
-  <button id="btnPrecios" onclick="abrirPrecios()" style="display:none">💰</button>
-  <a href="terminos.html" style="background:#e3e9ef;color:#33475b">ℹ️</a>
-  <a href="mailto:nmaureira@ucsc.cl?subject=Sugerencia%20Radar%20MP">💬</a>
+  <span class="conteo-pill" id="conteo">—</span>
+  <button onclick="abrirPipeline()" title="Mi pipeline">📊</button>
+  <button id="btnPrecios" onclick="abrirPrecios()" title="Precios de mercado">💰</button>
+  <a href="terminos.html" class="suave" title="Términos">ℹ️</a>
+  <a href="mailto:gustavoandred15@gmail.com?subject=Sugerencia%20Radar%20MP" title="Sugerencias">💬</a>
   <button id="instalar">📲 Instalar</button>
 </div>
 <div class="toast" id="toast"></div>

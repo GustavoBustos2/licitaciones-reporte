@@ -399,7 +399,7 @@ function render() {
   if (items.length > limite)
     html += `<button class="mas" onclick="limite+=${PAGINA};render()">Mostrar ${Math.min(PAGINA, items.length - limite)} más (${items.length - limite} restantes)</button>`;
   $('lista').innerHTML = html;
-  $('conteo').textContent = items.length + ' oport. · ' + generado;
+  $('conteo').textContent = items.length.toLocaleString('es-CL') + ' oportunidades';
 }
 function renderDesdeCero() { limite = PAGINA; render(); }
 
@@ -458,7 +458,7 @@ async function cargar() {
   globalCA = gc.status === 'fulfilled' ? (gc.value.items || []) : [];
   precios = pr.status === 'fulfilled' ? (pr.value.items || []) : [];
   $('actualizado').textContent = perfiles.length
-    ? `Datos: ${generado} · ${globalLic.length.toLocaleString('es-CL')} licitaciones + ${globalCA.length.toLocaleString('es-CL')} compras ágiles activas en Chile`
+    ? `Actualizado: ${generado} · ${globalLic.length.toLocaleString('es-CL')} licitaciones y ${globalCA.length.toLocaleString('es-CL')} compras ágiles activas en Chile`
     : 'No se pudieron cargar los datos — revisa tu conexión';
   armarUI(); render(); avisarNovedades();
 }
