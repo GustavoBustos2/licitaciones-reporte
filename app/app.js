@@ -1,4 +1,4 @@
-/* Radar MP — beta 2.
+/* Radar MP — beta 3 (navegación por pestañas + modales).
    Datos: JSON publicados por la nube. Perfiles multi-empresa + pipeline + precios. */
 const FUENTES = ['../datos/ingenieria-dek.json', '../datos/friometal.json'];
 const G_LIC = '../datos/global_licitaciones.json';
@@ -14,19 +14,34 @@ const ETAPAS = { EVALUANDO: '🟡 Evaluando', PREPARANDO: '🟠 Preparando', ENV
                  GANADA: '🟢 Ganada', PERDIDA: '⚪ Perdida', DESCARTADA: '✖ Descartada' };
 
 let perfiles = [], globalLic = [], globalCA = [], precios = [], adjud = [];
-let rubroActivo = 'todos', generado = '', limite = PAGINA;
+let rubroActivo = 'todos', generado = '', limite = PAGINA, vistaMercado = '';
 
 const $ = id => document.getElementById(id);
 const norm = t => (t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const standalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
+/* ---------- navegación por pestañas ---------- */
+function irA(vista) {
+  document.querySelectorAll('.vista').forEach(v => v.classList.remove('activa'));
+  $('v-' + vista).classList.add('activa');
+  document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('activo', b.dataset.v === vista));
+  window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+  if (vista === 'empresas') pintarEmpresas();
+  if (vista === 'pipeline') pintarPipeline();
+  if (vista === 'mercado') pintarMercado(vistaMercado);
+}
+function abrirModal(id) { $(id).classList.add('abierto'); }
+function cerrarModal(id) { $(id).classList.remove('abierto'); }
+// cerrar modal tocando el fondo
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('modal')) e.target.classList.remove('abierto');
+});
+
+/* ---------- almacenamiento ---------- */
 function marcas() {
   try {
     const m = JSON.parse(localStorage.getItem(KEY_MARCAS)) || {};
-    // migración de marcas antiguas al pipeline
-    for (const k in m) {
-      if (m[k] === 'INTERESA') m[k] = 'EVALUANDO';
-      if (m[k] === 'COTIZADA') m[k] = 'ENVIADA';
-    }
+    for (const k in m) { if (m[k] === 'INTERESA') m[k] = 'EVALUANDO'; if (m[k] === 'COTIZADA') m[k] = 'ENVIADA'; }
     return m;
   } catch (e) { return {}; }
 }
@@ -43,11 +58,6 @@ function toast(txt) {
   setTimeout(() => t.classList.remove('ver'), 1800);
 }
 function copiar(cod) { navigator.clipboard.writeText(cod).then(() => toast('Código copiado: ' + cod)); }
-function cerrarPaneles() {
-  ['formPerfil', 'panelEmpresas', 'panelPipeline', 'panelPrecios', 'panelComprador']
-    .forEach(id => $(id).style.display = 'none');
-}
-function abrirPanel(id) { cerrarPaneles(); $(id).style.display = 'block'; $(id).scrollIntoView({ behavior: 'smooth' }); }
 
 /* ---------- onboarding ---------- */
 function empezar(crearPerfil) {
@@ -63,6 +73,11 @@ function compartir(datos) {
   if (navigator.share) navigator.share({ title: 'Radar MP', text: texto }).catch(() => {});
   else window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
 }
+function compartirApp() {
+  const texto = 'Te recomiendo Radar MP: te avisa de todas las licitaciones y compras ágiles del Estado que calzan con tu rubro. Gratis en beta: ' + location.origin + location.pathname;
+  if (navigator.share) navigator.share({ title: 'Radar MP', text: texto }).catch(() => {});
+  else { navigator.clipboard.writeText(texto); toast('Enlace copiado para compartir'); }
+}
 function recordar(datos) {
   const d = JSON.parse(decodeURIComponent(datos));
   if (!d.cierre) { toast('Sin fecha de cierre'); return; }
@@ -71,14 +86,12 @@ function recordar(datos) {
   const ini = fmt(new Date(dt.getTime() - 3600000)), fin = fmt(dt);
   const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//RadarMP//ES', 'BEGIN:VEVENT',
     'UID:' + d.codigo + '@radarmp', 'DTSTART:' + ini, 'DTEND:' + fin,
-    'SUMMARY:CIERRA: ' + d.nombre.replace(/[,;]/g, ' '),
-    'DESCRIPTION:' + (d.link || ''), 'BEGIN:VALARM', 'TRIGGER:-P1D',
-    'ACTION:DISPLAY', 'DESCRIPTION:Cierra mañana', 'END:VALARM',
+    'SUMMARY:CIERRA: ' + d.nombre.replace(/[,;]/g, ' '), 'DESCRIPTION:' + (d.link || ''),
+    'BEGIN:VALARM', 'TRIGGER:-P1D', 'ACTION:DISPLAY', 'DESCRIPTION:Cierra mañana', 'END:VALARM',
     'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
   const a = document.createElement('a');
   a.href = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
-  a.download = 'cierre-' + d.codigo + '.ics';
-  a.click();
+  a.download = 'cierre-' + d.codigo + '.ics'; a.click();
   toast('Recordatorio creado — ábrelo para agregarlo a tu calendario');
 }
 function analizarIA(datos) {
@@ -113,7 +126,6 @@ const pack = d => encodeURIComponent(JSON.stringify(d)).replace(/'/g, '%27');
 function verComprador(nombre) {
   const n = decodeURIComponent(nombre);
   const enCA = globalCA.filter(it => it.o === n);
-  const abiertas = enCA.length;
   let enPerfiles = 0;
   perfiles.forEach(p => [...p.licitaciones, ...p.compra_agil].forEach(it => { if (it.organismo === n) enPerfiles++; }));
   const montos = enCA.map(it => it.m).filter(m => m > 0);
@@ -122,15 +134,14 @@ function verComprador(nombre) {
   const historial = suyas.length
     ? '<br><b>Últimas adjudicaciones de este comprador:</b><br>' + suyas.map(a =>
         `• ${a.nombre.slice(0, 45)} → <b>${(a.ganador || 's/i').slice(0, 30)}</b>` +
-        (a.monto ? ` ($${Math.round(a.monto).toLocaleString('es-CL')})` : '')).join('<br>')
-    : '';
-  $('contenidoComprador').innerHTML = `<b style="font-size:14px">🏛 ${n}</b>
-    <div class="hint" style="margin-top:8px;font-size:12.5px;line-height:1.7">
-    • Compras ágiles abiertas ahora: <b>${abiertas}</b> (monto promedio: <b>${prom}</b>)<br>
+        (a.monto ? ` ($${Math.round(a.monto).toLocaleString('es-CL')})` : '')).join('<br>') : '';
+  $('contenidoComprador').innerHTML = `<h3>🏛 ${n}</h3>
+    <div class="hint" style="font-size:12.5px;line-height:1.7">
+    • Compras ágiles abiertas ahora: <b>${enCA.length}</b> (monto promedio: <b>${prom}</b>)<br>
     • Apariciones en los rubros monitoreados: <b>${enPerfiles}</b>${historial}<br><br>
     Un comprador con compras frecuentes de tu rubro es un cliente para cultivar: gana una chica,
     cumple impecable, y las siguientes se inclinan a tu favor.</div>`;
-  abrirPanel('panelComprador');
+  abrirModal('modalComprador');
 }
 const orgClick = o => o ? `<span class="org" onclick="verComprador('${encodeURIComponent(o)}')">${o}</span>` : '';
 
@@ -148,38 +159,28 @@ function badgeDias(n, cierre) {
   return `<span class="badge ${c}" title="${cierre}">${txt}</span>`;
 }
 const montoB = m => m ? '<span class="badge azul">$' + Math.round(m).toLocaleString('es-CL') + '</span>' : '';
-
 function selEstado(codigo, actual) {
-  const ops = Object.entries(ETAPAS).map(([k, v]) =>
-    `<option value="${k}" ${k === actual ? 'selected' : ''}>${v}</option>`).join('');
-  return `<select class="estado" onchange="setMarca('${codigo}', this.value || null)">
-    <option value="">Etapa…</option>${ops}</select>`;
+  const ops = Object.entries(ETAPAS).map(([k, v]) => `<option value="${k}" ${k === actual ? 'selected' : ''}>${v}</option>`).join('');
+  return `<select class="estado" onchange="setMarca('${codigo}', this.value || null)"><option value="">Etapa…</option>${ops}</select>`;
 }
-
 function htmlLic(x) {
   const it = x.it, n = x.dias, m = x.marca;
-  const ia = { tipo: 'lic', nombre: it.nombre, codigo: it.codigo, organismo: it.organismo,
-               region: it.region, monto: it.monto, cierre: it.cierre, link: it.link };
+  const ia = { tipo: 'lic', nombre: it.nombre, codigo: it.codigo, organismo: it.organismo, region: it.region, monto: it.monto, cierre: it.cierre, link: it.link };
   return `<div class="card ${claseDias(n)} ${m ? 'e-' + m : ''}">
     <h3><a href="${it.link}" target="_blank" rel="noopener">${it.nombre}</a></h3>
     <div class="badges">${it.nueva ? '<span class="badge oro">★ NUEVA</span>' : ''}${badgeDias(n, it.cierre)}
       ${it.tipo ? `<span class="badge">${it.tipo}</span>` : ''}${montoB(it.monto)}</div>
     <div class="meta">${orgClick(it.organismo)} ${it.region ? '· ' + it.region.replace('Región', 'Reg.') : ''} · ${x.rubro}</div>
     ${it.desc ? `<details><summary>Descripción</summary>${it.desc}</details>` : ''}
-    <div class="acciones">
-      ${selEstado(it.codigo, m)}
-      <button onclick="recordar('${pack(ia)}')" title="agregar cierre al calendario">🗓</button>
+    <div class="acciones">${selEstado(it.codigo, m)}
+      <button onclick="recordar('${pack(ia)}')" title="calendario">🗓</button>
       <button onclick="compartir('${pack(ia)}')">↗</button>
-      <button onclick="analizarIA('${pack(ia)}')">🤖 IA</button>
-    </div></div>`;
+      <button onclick="analizarIA('${pack(ia)}')">🤖 IA</button></div></div>`;
 }
-
 function htmlCA(x) {
   const it = x.it, n = x.dias, m = x.marca;
   const ficha = it.ficha || ('https://compra-agil.mercadopublico.cl/resumen-cotizacion/' + it.codigo);
-  const ia = { tipo: 'agil', nombre: it.nombre, codigo: it.codigo, organismo: it.organismo,
-               region: it.region, monto: it.monto, cierre: it.cierre, link: ficha,
-               productos: it.productos, condiciones: it.condiciones };
+  const ia = { tipo: 'agil', nombre: it.nombre, codigo: it.codigo, organismo: it.organismo, region: it.region, monto: it.monto, cierre: it.cierre, link: ficha, productos: it.productos, condiciones: it.condiciones };
   return `<div class="card ${claseDias(n)} agil ${m ? 'e-' + m : ''}">
     <h3><a href="${ficha}" target="_blank" rel="noopener">${it.nombre}</a></h3>
     <div class="badges"><span class="badge agil">⚡ COMPRA ÁGIL</span>${badgeDias(n, it.cierre)}${montoB(it.monto)}
@@ -187,13 +188,11 @@ function htmlCA(x) {
     <div class="meta">${orgClick(it.organismo)} ${it.region ? '· ' + it.region.replace('Región', 'Reg.') : ''} · ${x.rubro}</div>
     ${it.productos ? `<details><summary>Ver ficha</summary><b>Piden:</b> ${it.productos}<br>
       <b>Condiciones:</b> ${it.condiciones || '-'}<br><b>Entrega:</b> ${it.entrega || '-'}</details>` : ''}
-    <div class="acciones">
-      ${selEstado(it.codigo, m)}
+    <div class="acciones">${selEstado(it.codigo, m)}
       <button onclick="copiar('${it.codigo}')">📋</button>
       <button onclick="recordar('${pack(ia)}')">🗓</button>
       <button onclick="compartir('${pack(ia)}')">↗</button>
-      <button onclick="analizarIA('${pack(ia)}')">🤖 IA</button>
-    </div></div>`;
+      <button onclick="analizarIA('${pack(ia)}')">🤖 IA</button></div></div>`;
 }
 
 /* ---------- plantillas ---------- */
@@ -206,18 +205,16 @@ const PLANTILLAS = {
   '🍽 Alimentación': { claves: 'alimentacion, alimentos, colaciones, abarrotes, banqueteria, coffee break', excluir: '' },
   '🚌 Transporte': { claves: 'transporte, traslado, flete, buses, transporte escolar', excluir: '' },
   '📚 Capacitación': { claves: 'capacitacion, curso, taller, relatoria, charla, diplomado', excluir: '' },
-  '🪑 Oficina y mobiliario': { claves: 'mobiliario, escritorios, sillas, articulos de oficina, papeleria, estantes', excluir: 'arriendo' },
+  '🪑 Oficina': { claves: 'mobiliario, escritorios, sillas, articulos de oficina, papeleria, estantes', excluir: 'arriendo' },
   '🌳 Áreas verdes': { claves: 'areas verdes, poda, jardines, riego, paisajismo, mantencion de parques', excluir: '' },
   '📹 Seguridad': { claves: 'vigilancia, guardias, camaras de seguridad, alarmas, control de acceso', excluir: '' },
   '🎪 Eventos': { claves: 'produccion de evento, amplificacion, escenario, carpas, animacion, actividad masiva', excluir: '' },
 };
 function usarPlantilla(nombre) {
   const p = PLANTILLAS[nombre];
-  $('pClaves').value = p.claves;
-  $('pExcluir').value = p.excluir;
+  $('pClaves').value = p.claves; $('pExcluir').value = p.excluir;
   if (!$('pNombre').value.trim()) $('pNombre').value = nombre.replace(/^\S+\s/, '');
-  contarVivo();
-  toast('Plantilla cargada — edítala a tu medida');
+  contarVivo(); toast('Plantilla cargada — edítala a tu medida');
 }
 function contarVivo() {
   const claves = $('pClaves').value.split(',').map(s => norm(s.trim())).filter(Boolean);
@@ -227,20 +224,19 @@ function contarVivo() {
   const p = { claves, excluir };
   const nLic = globalLic.filter(it => matchPerfil(p, it.n)).length;
   const nCA = globalCA.filter(it => matchPerfil(p, it.n)).length;
-  el.innerHTML = `📊 Con estas palabras verías hoy <b>${nLic} licitaciones</b> y <b>${nCA} compras ágiles ⚡</b> activas en Chile.` +
-    (nLic + nCA > 600 ? ' <span style="color:#d62828">Quizás demasiado amplio — afina o agrega exclusiones.</span>' : '') +
-    (nLic + nCA < 5 ? ' <span style="color:#f77f00">Muy pocas — prueba términos más generales o sinónimos.</span>' : '');
+  el.innerHTML = `📊 Con estas palabras verías hoy <b>${nLic} licitaciones</b> y <b>${nCA} compras ágiles ⚡</b>.` +
+    (nLic + nCA > 600 ? ' <span style="color:#d62828">Muy amplio — afina o agrega exclusiones.</span>' : '') +
+    (nLic + nCA < 5 ? ' <span style="color:#f77f00">Muy pocas — prueba términos más generales.</span>' : '');
 }
 
-/* ---------- perfiles propios ---------- */
+/* ---------- perfiles ---------- */
 function matchPerfil(p, texto) {
   const t = norm(texto);
   if ((p.excluir || []).some(e => e && t.includes(e))) return false;
   return (p.claves || []).some(c => c && t.includes(c));
 }
 function statsPerfil(p) {
-  return { nLic: globalLic.filter(it => matchPerfil(p, it.n)).length,
-           nCA: globalCA.filter(it => matchPerfil(p, it.n)).length };
+  return { nLic: globalLic.filter(it => matchPerfil(p, it.n)).length, nCA: globalCA.filter(it => matchPerfil(p, it.n)).length };
 }
 function guardarPerfil() {
   const nombre = $('pNombre').value.trim();
@@ -250,15 +246,15 @@ function guardarPerfil() {
   const lista = misPerfiles().filter(p => p.nombre !== nombre);
   lista.push({ nombre, claves, excluir });
   localStorage.setItem(KEY_PERFILES, JSON.stringify(lista));
-  cerrarPaneles();
-  rubroActivo = nombre;
-  armarUI(); renderDesdeCero();
+  cerrarModal('modalPerfil');
+  rubroActivo = nombre; armarChips(); renderDesdeCero();
+  irA('oportunidades');
   toast('Perfil "' + nombre + '" activo — buscando en todo Chile');
 }
 function borrarPerfil(nombre) {
   localStorage.setItem(KEY_PERFILES, JSON.stringify(misPerfiles().filter(p => p.nombre !== nombre)));
-  rubroActivo = 'todos';
-  armarUI(); renderDesdeCero();
+  if (rubroActivo === nombre) rubroActivo = 'todos';
+  armarChips(); render();
 }
 function duplicarPerfil(nombre) {
   const p = misPerfiles().find(x => x.nombre === nombre);
@@ -268,8 +264,7 @@ function duplicarPerfil(nombre) {
   while (lista.some(x => x.nombre === copia)) copia = p.nombre + ' (copia ' + (i++) + ')';
   lista.push({ nombre: copia, claves: [...p.claves], excluir: [...(p.excluir || [])] });
   localStorage.setItem(KEY_PERFILES, JSON.stringify(lista));
-  armarUI(); abrirEmpresas();
-  toast('Duplicada como "' + copia + '"');
+  armarChips(); pintarEmpresas(); toast('Duplicada como "' + copia + '"');
 }
 function abrirForm(nombre) {
   const p = misPerfiles().find(x => x.nombre === nombre);
@@ -278,29 +273,25 @@ function abrirForm(nombre) {
   $('pExcluir').value = p ? (p.excluir || []).join(', ') : '';
   $('plantillas').innerHTML = Object.keys(PLANTILLAS).map(n =>
     `<button type="button" class="chip" style="font-size:11px;padding:4px 10px" onclick="usarPlantilla('${n}')">${n}</button>`).join('');
-  contarVivo();
-  abrirPanel('formPerfil');
+  contarVivo(); abrirModal('modalPerfil');
 }
-function abrirEmpresas() {
+function pintarEmpresas() {
   const lista = misPerfiles();
   $('listaEmpresas').innerHTML = lista.length ? lista.map(p => {
     const s = statsPerfil(p);
-    return `<div class="emp">
-      <b>🏢 ${p.nombre}</b>
+    return `<div class="emp"><b>🏢 ${p.nombre}</b>
       <div class="kw"><b>Busca:</b> ${p.claves.join(', ')}${(p.excluir || []).length ? '<br><b>Excluye:</b> ' + p.excluir.join(', ') : ''}</div>
       <div class="stats">📊 Hoy: ${s.nLic} licitaciones · ${s.nCA} compras ágiles ⚡</div>
       <div class="btns">
-        <button style="background:#0d3b66;color:#fff;border:none" onclick="cerrarPaneles();setRubro('${p.nombre}')">👁 Ver</button>
-        <button onclick="rubroActivo='${p.nombre}';abrirForm('${p.nombre}')">✎ Editar</button>
+        <button style="background:var(--azul);color:#fff;border:none" onclick="setRubro('${p.nombre}');irA('oportunidades')">👁 Ver</button>
+        <button onclick="abrirForm('${p.nombre}')">✎ Editar</button>
         <button onclick="duplicarPerfil('${p.nombre}')">⧉ Duplicar</button>
-        <button onclick="if(confirm('¿Eliminar ${p.nombre}?')){borrarPerfil('${p.nombre}');abrirEmpresas()}">🗑</button>
+        <button onclick="if(confirm('¿Eliminar ${p.nombre}?')){borrarPerfil('${p.nombre}');pintarEmpresas()}">🗑</button>
       </div></div>`;
   }).join('') : '<div class="hint" style="margin-top:10px">Aún no has creado empresas. Crea la primera 👇</div>';
-  abrirPanel('panelEmpresas');
 }
 function exportarEmpresas() {
-  const datos = JSON.stringify({ perfiles: misPerfiles(), marcas: marcas() });
-  const codigo = btoa(unescape(encodeURIComponent(datos)));
+  const codigo = btoa(unescape(encodeURIComponent(JSON.stringify({ perfiles: misPerfiles(), marcas: marcas() }))));
   navigator.clipboard.writeText(codigo).then(() => {
     toast('Código copiado — pégalo en "Importar" en tu otro dispositivo');
     if (navigator.share) navigator.share({ title: 'Radar MP — respaldo', text: codigo }).catch(() => {});
@@ -312,65 +303,44 @@ function importarEmpresas() {
   try {
     const datos = JSON.parse(decodeURIComponent(escape(atob(codigo.trim()))));
     const actuales = misPerfiles();
-    (datos.perfiles || []).forEach(p => {
-      if (!actuales.some(x => x.nombre === p.nombre)) actuales.push(p);
-    });
+    (datos.perfiles || []).forEach(p => { if (!actuales.some(x => x.nombre === p.nombre)) actuales.push(p); });
     localStorage.setItem(KEY_PERFILES, JSON.stringify(actuales));
-    const m = marcas();
-    Object.assign(m, datos.marcas || {});
+    const m = marcas(); Object.assign(m, datos.marcas || {});
     localStorage.setItem(KEY_MARCAS, JSON.stringify(m));
-    armarUI(); abrirEmpresas();
-    toast('Importado: ' + (datos.perfiles || []).length + ' empresas con sus marcas');
+    armarChips(); pintarEmpresas();
+    toast('Importado: ' + (datos.perfiles || []).length + ' empresas');
   } catch (e) { toast('Código inválido'); }
 }
 
-/* ---------- estadísticas personales ---------- */
-function abrirStats() {
-  const m = marcas();
-  const conteo = {};
+/* ---------- pipeline + stats ---------- */
+function pintarPipeline() {
+  const m = marcas(), conteo = {};
   Object.values(m).forEach(v => conteo[v] = (conteo[v] || 0) + 1);
+  $('embudo').innerHTML = Object.entries(ETAPAS).filter(([k]) => k !== 'DESCARTADA').map(([k, v]) =>
+    `<div class="etapa" onclick="filtrarEtapa('${k}')">
+      <b>${conteo[k] || 0}</b><span>${v}</span></div>`).join('');
   const enviadas = (conteo.ENVIADA || 0) + (conteo.GANADA || 0) + (conteo.PERDIDA || 0);
   const cerradas = (conteo.GANADA || 0) + (conteo.PERDIDA || 0);
   const tasa = cerradas ? Math.round((conteo.GANADA || 0) / cerradas * 100) : null;
-  // monto estimado de las ganadas que aún están en los datos
   const montoPor = {};
   perfiles.forEach(p => [...p.licitaciones, ...p.compra_agil].forEach(it => { if (it.monto) montoPor[it.codigo] = it.monto; }));
   globalCA.forEach(g => { if (g.m) montoPor[g.c] = g.m; });
   let ganado = 0;
   Object.entries(m).forEach(([cod, v]) => { if (v === 'GANADA' && montoPor[cod]) ganado += montoPor[cod]; });
   $('contenidoStats').innerHTML = `
-    <div class="embudo" style="margin-top:12px">
+    <div class="embudo">
       <div class="etapa"><b>${Object.keys(m).length}</b><span>gestionadas</span></div>
-      <div class="etapa"><b>${enviadas}</b><span>ofertas enviadas</span></div>
+      <div class="etapa"><b>${enviadas}</b><span>enviadas</span></div>
       <div class="etapa"><b>${conteo.GANADA || 0}</b><span>ganadas 🏆</span></div>
-      <div class="etapa"><b>${tasa === null ? '—' : tasa + '%'}</b><span>tasa de éxito</span></div>
+      <div class="etapa"><b>${tasa === null ? '—' : tasa + '%'}</b><span>tasa éxito</span></div>
     </div>
     ${ganado ? `<div class="hint" style="margin-top:12px;font-size:13px">💰 Monto referencial ganado:
       <b>$${Math.round(ganado).toLocaleString('es-CL')}</b></div>` : ''}
-    <div class="hint" style="margin-top:10px">La tasa de éxito se calcula sobre las que marcaste
-    Ganada o Perdida. En Compra Ágil una tasa del 10-20% ya es buen negocio — el volumen manda.</div>`;
-  abrirPanel('panelStats');
+    <div class="hint" style="margin-top:10px">La tasa se calcula sobre Ganadas + Perdidas. En Compra Ágil
+    un 10-20% ya es buen negocio: el volumen manda.</div>`;
 }
 
-/* ---------- tema oscuro ---------- */
-function toggleTema() {
-  const oscuro = document.body.classList.toggle('oscuro');
-  localStorage.setItem('radarTema', oscuro ? 'oscuro' : 'claro');
-}
-if (localStorage.getItem('radarTema') === 'oscuro') document.body.classList.add('oscuro');
-
-/* ---------- pipeline ---------- */
-function abrirPipeline() {
-  const m = marcas();
-  const conteo = {};
-  Object.values(m).forEach(v => conteo[v] = (conteo[v] || 0) + 1);
-  $('embudo').innerHTML = Object.entries(ETAPAS).filter(([k]) => k !== 'DESCARTADA').map(([k, v]) =>
-    `<div class="etapa" onclick="cerrarPaneles();document.getElementById('fVer').value='${k}';renderDesdeCero()">
-      <b>${conteo[k] || 0}</b><span>${v}</span></div>`).join('');
-  abrirPanel('panelPipeline');
-}
-
-/* ---------- precios de mercado + competencia ---------- */
+/* ---------- mercado (precios / competencia / adjudicaciones) ---------- */
 function filasPreciosDelRubro() {
   const propio = misPerfiles().find(p => p.nombre === rubroActivo);
   if (propio) return precios.filter(r => matchPerfil(propio, r.nombre));
@@ -378,69 +348,57 @@ function filasPreciosDelRubro() {
   return precios;
 }
 function rankingCompetencia(filas) {
-  // detalle: "EMPRESA: $1.234.567 ★GANADOR; OTRA: $999.000; ..."
   const comp = {};
   filas.forEach(r => (r.detalle || '').split('; ').forEach(seg => {
     const m = seg.match(/^(.+?): \$([\d.]+)( ★GANADOR)?$/);
     if (!m) return;
     const nombre = m[1].trim(), monto = parseInt(m[2].replace(/\./g, ''), 10) || 0;
     if (!comp[nombre]) comp[nombre] = { cotizo: 0, gano: 0, montos: [] };
-    comp[nombre].cotizo++;
-    if (m[3]) comp[nombre].gano++;
+    comp[nombre].cotizo++; if (m[3]) comp[nombre].gano++;
     if (monto > 0) comp[nombre].montos.push(monto);
   }));
-  return Object.entries(comp)
-    .map(([n, c]) => ({ n, ...c, prom: c.montos.length ? c.montos.reduce((a, b) => a + b, 0) / c.montos.length : 0 }))
+  return Object.entries(comp).map(([n, c]) => ({ n, ...c, prom: c.montos.length ? c.montos.reduce((a, b) => a + b, 0) / c.montos.length : 0 }))
     .sort((a, b) => b.gano - a.gano || b.cotizo - a.cotizo);
 }
-function abrirPrecios(vista) {
-  const filas = filasPreciosDelRubro();
+function pintarMercado(vista) {
+  vistaMercado = vista || '';
   const propio = misPerfiles().find(p => p.nombre === rubroActivo);
-  const contexto = propio ? `de <b>${propio.nombre}</b>` : 'de todos los rubros monitoreados';
-  const tabs = `<div style="display:flex;gap:8px;margin:10px 0 4px;flex-wrap:wrap">
-    <button class="chip ${!vista ? 'activo' : ''}" onclick="abrirPrecios()">💰 Precios</button>
-    <button class="chip ${vista === 'comp' ? 'activo' : ''}" onclick="abrirPrecios('comp')">🥊 Competencia</button>
-    <button class="chip ${vista === 'adj' ? 'activo' : ''}" onclick="abrirPrecios('adj')">🏆 Licitaciones ganadas</button></div>
-    <div class="hint">Basado en procesos recién adjudicados ${contexto}. Se actualiza solo cada día.</div>`;
+  $('mercadoContexto').textContent = propio ? `Datos de "${propio.nombre}". Se actualiza solo cada día.`
+    : rubroActivo !== 'todos' ? `Datos del rubro seleccionado.` : 'Datos de todos los rubros monitoreados. Elige tu empresa en Oportunidades para filtrar.';
+  $('mercadoTabs').innerHTML = [['', '💰 Precios'], ['comp', '🥊 Competencia'], ['adj', '🏆 Ganadas']]
+    .map(([v, t]) => `<button class="chip ${vistaMercado === v ? 'activo' : ''}" onclick="pintarMercado('${v}')">${t}</button>`).join('');
 
   let cuerpo;
-  if (vista === 'adj') {
-    const propioA = misPerfiles().find(p => p.nombre === rubroActivo);
+  if (vistaMercado === 'adj') {
     let filasA = adjud;
-    if (propioA) filasA = adjud.filter(r => matchPerfil(propioA, r.nombre));
+    if (propio) filasA = adjud.filter(r => matchPerfil(propio, r.nombre));
     else if (rubroActivo !== 'todos') filasA = adjud.filter(r => r.perfil === rubroActivo);
     cuerpo = filasA.length
-      ? `<table class="precios"><tr><th>Fecha</th><th>Licitación</th><th>Ganador</th><th>Monto</th></tr>` +
-        filasA.slice(0, 30).map(r =>
-          `<tr><td>${r.fecha}</td><td>${r.nombre.slice(0, 50)}</td>
-           <td><b>${(r.ganador || 's/i').slice(0, 30)}</b></td>
-           <td>${r.monto ? '$' + Math.round(r.monto).toLocaleString('es-CL') : 's/i'}</td></tr>`).join('') + '</table>'
-      : '<div class="hint" style="margin-top:10px">Aún recolectando adjudicaciones de este rubro — se llena solo día a día.</div>';
-    $('contenidoPrecios').innerHTML = tabs + cuerpo;
-    abrirPanel('panelPrecios');
-    return;
-  }
-  if (!filas.length) {
-    cuerpo = '<div class="hint" style="margin-top:10px">Aún estamos recolectando procesos adjudicados de tu rubro. Esta sección se llena sola día a día.</div>';
-  } else if (vista === 'comp') {
-    const rk = rankingCompetencia(filas);
-    cuerpo = rk.length
-      ? `<table class="precios"><tr><th>Empresa</th><th>Cotizó</th><th>Ganó</th><th>Oferta promedio</th></tr>` +
-        rk.slice(0, 25).map(c =>
-          `<tr><td>${c.n}</td><td>${c.cotizo}</td>
-           <td>${c.gano ? '<b style="color:#2a9d8f">' + c.gano + ' 🏆</b>' : '0'}</td>
-           <td>${c.prom ? '$' + Math.round(c.prom).toLocaleString('es-CL') : 's/i'}</td></tr>`).join('') + '</table>' +
-        '<div class="hint" style="margin-top:8px">Quién gana seguido y a qué precio promedio: tu referencia para cotizar más filudo que ellos.</div>'
-      : '<div class="hint" style="margin-top:10px">Todavía no hay detalle de competidores en estos procesos.</div>';
+      ? `<table class="tabla"><tr><th>Fecha</th><th>Licitación</th><th>Ganador</th><th>Monto</th></tr>` +
+        filasA.slice(0, 40).map(r => `<tr><td>${r.fecha}</td><td>${r.nombre.slice(0, 48)}</td>
+          <td><b>${(r.ganador || 's/i').slice(0, 28)}</b></td>
+          <td>${r.monto ? '$' + Math.round(r.monto).toLocaleString('es-CL') : 's/i'}</td></tr>`).join('') + '</table>'
+      : '<div class="hint">Aún recolectando adjudicaciones de este rubro — se llena solo día a día.</div>';
   } else {
-    cuerpo = `<table class="precios"><tr><th>Compra</th><th>Ofertas</th><th>Rango</th><th>Ganó</th></tr>` +
-      filas.slice(0, 30).map(r =>
-        `<tr><td>${r.nombre.slice(0, 55)}</td><td>${r.ofertas}</td>
-         <td>${r.min ? '$' + Math.round(r.min).toLocaleString('es-CL') + '–$' + Math.round(r.max).toLocaleString('es-CL') : 's/i'}</td>
-         <td>${r.ganador ? r.ganador.slice(0, 25) + '<br><b>$' + Math.round(r.monto || 0).toLocaleString('es-CL') + '</b>' : 'en evaluación'}</td></tr>`).join('') + '</table>';
+    const filas = filasPreciosDelRubro();
+    if (!filas.length) cuerpo = '<div class="hint">Aún estamos recolectando procesos adjudicados de tu rubro. Esta sección se llena sola día a día.</div>';
+    else if (vistaMercado === 'comp') {
+      const rk = rankingCompetencia(filas);
+      cuerpo = rk.length
+        ? `<table class="tabla"><tr><th>Empresa</th><th>Cotizó</th><th>Ganó</th><th>Oferta prom.</th></tr>` +
+          rk.slice(0, 30).map(c => `<tr><td>${c.n}</td><td>${c.cotizo}</td>
+            <td>${c.gano ? '<b style="color:#2a9d8f">' + c.gano + ' 🏆</b>' : '0'}</td>
+            <td>${c.prom ? '$' + Math.round(c.prom).toLocaleString('es-CL') : 's/i'}</td></tr>`).join('') + '</table>' +
+          '<div class="hint" style="margin-top:8px">Quién gana seguido y a qué precio: tu referencia para cotizar más filudo.</div>'
+        : '<div class="hint">Todavía no hay detalle de competidores en estos procesos.</div>';
+    } else {
+      cuerpo = `<table class="tabla"><tr><th>Compra</th><th>Ofertas</th><th>Rango</th><th>Ganó</th></tr>` +
+        filas.slice(0, 40).map(r => `<tr><td>${r.nombre.slice(0, 50)}</td><td>${r.ofertas}</td>
+          <td>${r.min ? '$' + Math.round(r.min).toLocaleString('es-CL') + '–$' + Math.round(r.max).toLocaleString('es-CL') : 's/i'}</td>
+          <td>${r.ganador ? r.ganador.slice(0, 22) + '<br><b>$' + Math.round(r.monto || 0).toLocaleString('es-CL') + '</b>' : 'en eval.'}</td></tr>`).join('') + '</table>';
+    }
   }
-  $('contenidoPrecios').innerHTML = tabs + cuerpo;
-  abrirPanel('panelPrecios');
+  $('contenidoMercado').innerHTML = cuerpo;
 }
 
 /* ---------- recolección + render ---------- */
@@ -451,16 +409,11 @@ function recolectar() {
   const push = (it, esCA, rubro) => {
     const n = dias(it.cierre);
     if (n !== null && n < 0) return;
-    out.push({ it, esCA, rubro, dias: n, marca: m[it.codigo] || '',
-               nombreN: norm(it.nombre), region: it.region || '' });
+    out.push({ it, esCA, rubro, dias: n, marca: m[it.codigo] || '', nombreN: norm(it.nombre), region: it.region || '' });
   };
   if (propio) {
-    globalLic.forEach(g => { if (matchPerfil(propio, g.n)) push({
-      codigo: g.c, nombre: g.n, cierre: g.f,
-      link: 'https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=' + g.c }, false, propio.nombre); });
-    globalCA.forEach(g => { if (matchPerfil(propio, g.n)) push({
-      codigo: g.c, nombre: g.n, cierre: g.f, organismo: g.o, region: g.r,
-      monto: g.m, ofertas: g.of }, true, propio.nombre); });
+    globalLic.forEach(g => { if (matchPerfil(propio, g.n)) push({ codigo: g.c, nombre: g.n, cierre: g.f, link: 'https://www.mercadopublico.cl/fichaLicitacion.html?idLicitacion=' + g.c }, false, propio.nombre); });
+    globalCA.forEach(g => { if (matchPerfil(propio, g.n)) push({ codigo: g.c, nombre: g.n, cierre: g.f, organismo: g.o, region: g.r, monto: g.m, ofertas: g.of }, true, propio.nombre); });
   } else {
     for (const p of perfiles) {
       if (rubroActivo !== 'todos' && p.nombre !== rubroActivo) continue;
@@ -470,10 +423,8 @@ function recolectar() {
   }
   return out;
 }
-
 function render() {
-  const tipo = $('fTipo').value, region = $('fRegion').value, ver = $('fVer').value;
-  const rMonto = $('fMonto').value;
+  const tipo = $('fTipo').value, region = $('fRegion').value, ver = $('fVer').value, rMonto = $('fMonto').value;
   const q = norm($('fTexto').value.trim());
   let items = recolectar().filter(x => {
     if (tipo === 'agil' && !x.esCA) return false;
@@ -491,27 +442,18 @@ function render() {
     if (ETAPAS[ver] && x.marca !== ver) return false;
     return true;
   });
-  const orden = $('fOrden') ? $('fOrden').value : 'cierre';
-  if (orden === 'monto') {
-    items.sort((a, b) => (b.it.monto || 0) - (a.it.monto || 0));
-  } else if (orden === 'chance') {
+  const orden = $('fOrden').value;
+  if (orden === 'monto') items.sort((a, b) => (b.it.monto || 0) - (a.it.monto || 0));
+  else if (orden === 'chance') {
     const score = x => {
       let s = 0;
-      if (x.esCA) {
-        const of = parseInt(x.it.ofertas) || 0;
-        s += of === 0 ? 30 : Math.max(0, 18 - of * 5);
-        if (x.dias !== null && x.dias <= 2) s += 12; else if (x.dias !== null && x.dias <= 5) s += 6;
-      } else {
-        if (x.it.nueva) s += 12;
-        if (x.dias !== null && x.dias >= 5) s += 8;
-      }
+      if (x.esCA) { const of = parseInt(x.it.ofertas) || 0; s += of === 0 ? 30 : Math.max(0, 18 - of * 5); if (x.dias !== null && x.dias <= 2) s += 12; else if (x.dias !== null && x.dias <= 5) s += 6; }
+      else { if (x.it.nueva) s += 12; if (x.dias !== null && x.dias >= 5) s += 8; }
       if (x.it.monto) s += Math.min(15, x.it.monto / 1e6);
       return s;
     };
     items.sort((a, b) => score(b) - score(a));
-  } else {
-    items.sort((a, b) => (a.it.cierre || '9999').localeCompare(b.it.cierre || '9999'));
-  }
+  } else items.sort((a, b) => (a.it.cierre || '9999').localeCompare(b.it.cierre || '9999'));
 
   const visibles = items.slice(0, limite);
   let html = visibles.map(x => x.esCA ? htmlCA(x) : htmlLic(x)).join('');
@@ -519,31 +461,29 @@ function render() {
   if (items.length > limite)
     html += `<button class="mas" onclick="limite+=${PAGINA};render()">Mostrar ${Math.min(PAGINA, items.length - limite)} más (${items.length - limite} restantes)</button>`;
   $('lista').innerHTML = html;
-  $('conteo').textContent = items.length.toLocaleString('es-CL') + ' oportunidades';
 }
 function renderDesdeCero() { limite = PAGINA; render(); }
+function filtrarEtapa(k) { $('fVer').value = k; renderDesdeCero(); irA('oportunidades'); }
 
-function armarUI() {
+function armarChips() {
   const propios = misPerfiles();
   let html = propios.length
-    ? `<button class="chip crear" onclick="abrirEmpresas()">🏢 Mis empresas (${propios.length})</button>`
+    ? `<button class="chip crear" onclick="abrirForm()">➕ Nueva</button>`
     : `<button class="chip crear" onclick="abrirForm()">➕ Mi empresa</button>`;
-  html += propios.map(p =>
-    `<button class="chip propio ${p.nombre === rubroActivo ? 'activo' : ''}" onclick="setRubro('${p.nombre}')">🏢 ${p.nombre}</button>`).join('');
+  html += propios.map(p => `<button class="chip propio ${p.nombre === rubroActivo ? 'activo' : ''}" onclick="setRubro('${p.nombre}')">🏢 ${p.nombre}</button>`).join('');
   html += `<button class="chip ${rubroActivo === 'todos' ? 'activo' : ''}" onclick="setRubro('todos')">Ejemplos</button>`;
-  html += perfiles.map(p =>
-    `<button class="chip ${p.nombre === rubroActivo ? 'activo' : ''}" onclick="setRubro('${p.nombre}')">${p.nombre}</button>`).join('');
+  html += perfiles.map(p => `<button class="chip ${p.nombre === rubroActivo ? 'activo' : ''}" onclick="setRubro('${p.nombre}')">${p.nombre}</button>`).join('');
   $('chips').innerHTML = html;
-
+}
+function armarRegiones() {
   const regiones = new Set();
   perfiles.forEach(p => [...p.licitaciones, ...p.compra_agil].forEach(it => it.region && regiones.add(it.region)));
   globalCA.forEach(it => it.r && regiones.add(it.r));
   const sel = $('fRegion').value;
   $('fRegion').innerHTML = '<option value="todas">Todas las regiones</option>' +
     [...regiones].sort().map(r => `<option value="${r}" ${r === sel ? 'selected' : ''}>${r}</option>`).join('');
-  $('btnPrecios').style.display = precios.length ? 'block' : 'block';
 }
-function setRubro(r) { rubroActivo = r; armarUI(); renderDesdeCero(); }
+function setRubro(r) { rubroActivo = r; armarChips(); renderDesdeCero(); }
 
 function avisarNovedades() {
   const ultima = localStorage.getItem(KEY_VISITA) || '';
@@ -556,8 +496,6 @@ function avisarNovedades() {
       new Notification('Radar MP', { body: `${nuevas} oportunidades nuevas`, icon: 'icon-192.png' });
   }
   localStorage.setItem(KEY_VISITA, new Date().toISOString().slice(0, 10));
-  if ('Notification' in window && Notification.permission === 'default')
-    setTimeout(() => Notification.requestPermission(), 4000);
 }
 
 async function cargar() {
@@ -570,59 +508,69 @@ async function cargar() {
   ]);
   perfiles = [];
   if (curados.status === 'fulfilled')
-    for (const r of curados.value) {
-      if (r.status !== 'fulfilled') continue;
-      generado = r.value.generado || generado;
-      perfiles.push(...(r.value.perfiles || []));
-    }
+    for (const r of curados.value) { if (r.status !== 'fulfilled') continue; generado = r.value.generado || generado; perfiles.push(...(r.value.perfiles || [])); }
   globalLic = gl.status === 'fulfilled' ? (gl.value.items || []) : [];
   globalCA = gc.status === 'fulfilled' ? (gc.value.items || []) : [];
   precios = pr.status === 'fulfilled' ? (pr.value.items || []) : [];
   adjud = [];
-  if (adj.status === 'fulfilled')
-    for (const r of adj.value)
-      if (r.status === 'fulfilled') adjud.push(...(r.value.items || []));
+  if (adj.status === 'fulfilled') for (const r of adj.value) if (r.status === 'fulfilled') adjud.push(...(r.value.items || []));
   adjud.sort((a, b) => (b.fecha || '').localeCompare(a.fecha || ''));
   $('actualizado').textContent = perfiles.length
-    ? `Actualizado: ${generado} · ${globalLic.length.toLocaleString('es-CL')} licitaciones y ${globalCA.length.toLocaleString('es-CL')} compras ágiles activas en Chile`
+    ? `Actualizado: ${generado} · ${globalLic.length.toLocaleString('es-CL')} licitaciones y ${globalCA.length.toLocaleString('es-CL')} compras ágiles activas`
     : 'No se pudieron cargar los datos — revisa tu conexión';
-  armarUI(); render(); avisarNovedades();
+  armarChips(); armarRegiones(); render(); avisarNovedades();
 }
 
-/* onboarding + instalación */
-if (!localStorage.getItem(KEY_ONBOARD)) $('bienvenida').style.display = 'flex';
-const esIos = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
-const yaInstalada = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-if (esIos) $('hintIos').style.display = 'block';
-if (!yaInstalada && !localStorage.getItem('radarBannerOff'))
-  $('bannerInstalar').style.display = 'flex';
+/* ---------- tema ---------- */
+function toggleTema() {
+  const oscuro = document.body.classList.toggle('oscuro');
+  localStorage.setItem('radarTema', oscuro ? 'oscuro' : 'claro');
+  document.querySelector('meta[name=theme-color]').content = oscuro ? '#0e1621' : '#0d3b66';
+}
+if (localStorage.getItem('radarTema') === 'oscuro') { document.body.classList.add('oscuro'); }
 
+/* ---------- notificaciones ---------- */
+function pedirNotif() {
+  if (!('Notification' in window)) { toast('Tu navegador no soporta notificaciones'); return; }
+  Notification.requestPermission().then(p => {
+    $('btnNotif').textContent = p === 'granted' ? '✓ Activadas' : 'Activar';
+    if (p === 'granted') { $('btnNotif').classList.add('ok'); toast('Notificaciones activadas'); }
+  });
+}
+
+/* ---------- instalación (robusta) ---------- */
 let promptInstalar = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault(); promptInstalar = e; $('instalar').style.display = 'block';
-});
-function instalarApp() {
-  if (promptInstalar) {
-    promptInstalar.prompt();
-    promptInstalar = null;
-    cerrarBannerInstalar();
-    return;
+function refrescarEstadoInstalar() {
+  const inst = standalone();
+  // banner solo si NO instalada y no lo cerró
+  $('bannerInstalar').style.display = (!inst && !localStorage.getItem('radarBannerOff')) ? 'flex' : 'none';
+  // botón/estado en "Más"
+  if ($('btnInstalar')) {
+    if (inst) { $('btnInstalar').textContent = '✓ Instalada'; $('btnInstalar').classList.add('ok'); $('btnInstalar').disabled = true; $('dInstalar').textContent = 'Ya está en tu pantalla de inicio'; }
+    else { $('btnInstalar').textContent = 'Instalar'; $('btnInstalar').classList.remove('ok'); $('btnInstalar').disabled = false; }
   }
-  // el navegador no ofrece el diálogo: mostrar instrucciones según plataforma
-  const pasos = esIos
-    ? '1. Toca el botón <b>Compartir</b> (cuadrado con flecha ↑) en la barra de Safari.<br>2. Baja y elige <b>"Añadir a pantalla de inicio"</b>.<br>3. Confirma con <b>Añadir</b>.'
-    : '1. Toca el menú <b>⋮</b> (arriba a la derecha en Chrome).<br>2. Elige <b>"Agregar a la pantalla principal"</b> o <b>"Instalar aplicación"</b>.<br>3. Confirma.';
-  $('contenidoComprador').innerHTML = `<b style="font-size:15px">📲 Cómo instalar Radar MP</b>
-    <div class="hint" style="margin-top:10px;font-size:13px;line-height:2">${pasos}<br><br>
-    Quedará con su ícono propio, pantalla completa y funcionará incluso sin conexión.</div>`;
-  abrirPanel('panelComprador');
+  if ($('btnNotif') && 'Notification' in window && Notification.permission === 'granted') {
+    $('btnNotif').textContent = '✓ Activadas'; $('btnNotif').classList.add('ok');
+  }
 }
-function cerrarBannerInstalar() {
-  $('bannerInstalar').style.display = 'none';
-  localStorage.setItem('radarBannerOff', '1');
+function instalarApp() {
+  if (standalone()) { toast('La app ya está instalada 🎉'); return; }
+  if (promptInstalar) { promptInstalar.prompt(); promptInstalar = null; cerrarBannerInstalar(); return; }
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const pasos = ios
+    ? '1. Toca <b>Compartir</b> (cuadrado con flecha ↑) en Safari.<br>2. Elige <b>"Añadir a pantalla de inicio"</b>.<br>3. Confirma con <b>Añadir</b>.'
+    : '1. Toca el menú <b>⋮</b> (arriba a la derecha).<br>2. Elige <b>"Instalar aplicación"</b> o <b>"Agregar a pantalla principal"</b>.<br>3. Confirma.';
+  $('contenidoComprador').innerHTML = `<h3>📲 Cómo instalar Radar MP</h3>
+    <div class="hint" style="font-size:13px;line-height:2">${pasos}<br><br>
+    Quedará con ícono propio, pantalla completa y funcionará sin conexión.</div>`;
+  abrirModal('modalComprador');
 }
-$('instalar').addEventListener('click', instalarApp);
-window.addEventListener('appinstalled', () => { cerrarBannerInstalar(); toast('¡App instalada! 🎉'); });
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+function cerrarBannerInstalar() { $('bannerInstalar').style.display = 'none'; localStorage.setItem('radarBannerOff', '1'); }
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); promptInstalar = e; refrescarEstadoInstalar(); });
+window.addEventListener('appinstalled', () => { promptInstalar = null; refrescarEstadoInstalar(); toast('¡App instalada! 🎉'); });
 
+/* ---------- arranque ---------- */
+if (!localStorage.getItem(KEY_ONBOARD)) $('bienvenida').style.display = 'flex';
+refrescarEstadoInstalar();
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 cargar();

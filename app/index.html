@@ -9,153 +9,187 @@
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
-:root{--azul:#0d3b66;--azul2:#155a8a;--acento:#f0c419;--fondo:#eef2f6;--tinta:#17202a;
-  --gris:#5c6b78;--borde:#dbe4ec;--sombra:0 2px 10px rgba(13,59,102,.08)}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--fondo);color:var(--tinta)}
-body.oscuro{--fondo:#0f1620;--tinta:#e6edf3;--gris:#9db1c3;--borde:#243447;
+:root{
+  --azul:#0d3b66;--azul2:#155a8a;--acento:#f0c419;
+  --fondo:#eef2f6;--sup:#ffffff;--sup2:#f7fafc;--sup-agil:#fff8dd;--agil-bd:#eedd9a;
+  --tinta:#17202a;--gris:#5c6b78;--enlace:#0d3b66;--borde:#dbe4ec;
+  --badge-bg:#e8eef4;--badge-tx:#33475b;--etapa-bg:#eef3f8;
+  --sombra:0 2px 10px rgba(13,59,102,.08)}
+body.oscuro{
+  --fondo:#0e1621;--sup:#1a2532;--sup2:#141e2a;--sup-agil:#2c2512;--agil-bd:#5a4d1a;
+  --tinta:#e7eef5;--gris:#9db1c3;--enlace:#6db3f0;--borde:#2a3a4d;
+  --badge-bg:#2a3a4d;--badge-tx:#cfe3f5;--etapa-bg:#141e2a;
   --sombra:0 2px 10px rgba(0,0,0,.4)}
-body.oscuro .chips,body.oscuro .panel,body.oscuro .card,body.oscuro .buscador input,
-body.oscuro .filtros select,body.oscuro .chip,body.oscuro .acciones button,
-body.oscuro .acciones select,body.oscuro .emp,body.oscuro .emp .btns button{background:#18222e;color:var(--tinta)}
-body.oscuro .card.agil{background:#241f0e;border-color:#5a4d1a}
-body.oscuro details{background:#101822}
-body.oscuro .pie{background:rgba(16,22,30,.94)}
-body.oscuro .pie .conteo-pill{background:#243447;color:#cfe3f5}
-body.oscuro .etapa{background:#18222e}
-body.oscuro .badge{background:#243447;color:#cfe3f5}
-body.oscuro .vacio,body.oscuro .cargando{color:var(--gris)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--fondo);
+  color:var(--tinta);transition:background .2s,color .2s}
 button{font-family:inherit}
+a{color:var(--enlace)}
 
+/* ---- header ---- */
 header{background:linear-gradient(135deg,var(--azul) 0%,var(--azul2) 100%);color:#fff;
-  padding:16px 18px 12px;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px rgba(13,59,102,.35)}
-header h1{margin:0;font-size:19px;display:flex;align-items:center;gap:8px;letter-spacing:.3px}
-.beta{font-size:9.5px;background:var(--acento);color:#4a3800;border-radius:8px;padding:2px 8px;
-  font-weight:800;letter-spacing:.5px}
+  padding:14px 16px 10px;position:sticky;top:0;z-index:20;box-shadow:0 2px 12px rgba(13,59,102,.35)}
+.h-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+header h1{margin:0;font-size:18px;display:flex;align-items:center;gap:8px;letter-spacing:.3px}
+.beta{font-size:9px;background:var(--acento);color:#4a3800;border-radius:8px;padding:2px 7px;font-weight:800}
+.h-tema{background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;
+  border-radius:50%;font-size:15px;cursor:pointer}
 .sub{font-size:11px;opacity:.8;margin-top:3px}
 .aviso-nuevas{background:var(--acento);color:#4a3800;font-weight:700;font-size:12px;
-  border-radius:12px;padding:5px 12px;display:inline-block;margin-top:8px;
-  box-shadow:0 2px 6px rgba(0,0,0,.25)}
+  border-radius:12px;padding:5px 12px;display:inline-block;margin-top:8px}
 
-.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 16px;background:#fff;
+/* ---- vistas (pestañas) ---- */
+main{min-height:calc(100vh - 130px)}
+.vista{display:none}
+.vista.activa{display:block;animation:aparece .18s ease}
+@keyframes aparece{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.v-titulo{padding:14px 16px 2px;font-size:17px;font-weight:700;color:var(--tinta)}
+.v-sub{padding:0 16px;font-size:12px;color:var(--gris);margin-bottom:6px}
+
+/* ---- chips rubros ---- */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 16px;background:var(--sup);
   border-bottom:1px solid var(--borde);scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{white-space:nowrap;border:1.5px solid var(--borde);border-radius:20px;padding:7px 15px;
-  font-size:13px;background:#fff;color:var(--tinta);cursor:pointer;font-weight:500;
-  transition:all .15s}
-.chip.activo{background:var(--azul);color:#fff;border-color:var(--azul);
-  box-shadow:0 3px 8px rgba(13,59,102,.3)}
-.chip.crear{border-style:dashed;border-color:var(--azul);color:var(--azul);font-weight:700}
-.chip.propio{border-color:var(--acento);background:#fffbea}
+  font-size:13px;background:var(--sup);color:var(--tinta);cursor:pointer;font-weight:500;transition:all .15s}
+.chip.activo{background:var(--azul);color:#fff;border-color:var(--azul);box-shadow:0 3px 8px rgba(13,59,102,.3)}
+.chip.crear{border-style:dashed;border-color:var(--enlace);color:var(--enlace);font-weight:700}
+.chip.propio{border-color:var(--acento);background:var(--sup-agil)}
 .chip.propio.activo{background:var(--azul);color:#fff;border-color:var(--azul)}
 
+/* ---- banner instalar ---- */
+.banner{display:none;background:linear-gradient(90deg,var(--sup-agil),var(--sup-agil));
+  border-bottom:1px solid var(--agil-bd);padding:10px 16px;font-size:13px;color:var(--tinta);
+  align-items:center;gap:10px;justify-content:space-between}
+.banner b{color:var(--tinta)}
+.banner .bi{background:var(--azul);color:#fff;border:none;border-radius:10px;padding:8px 14px;
+  font-size:12.5px;font-weight:700;cursor:pointer}
+.banner .bx{background:none;border:none;font-size:15px;cursor:pointer;color:var(--gris)}
+
+/* ---- buscador + filtros ---- */
 .buscador{padding:10px 16px 0}
 .buscador input{width:100%;padding:11px 16px;border:1.5px solid var(--borde);border-radius:14px;
-  font-size:14px;background:#fff;box-shadow:var(--sombra);outline:none;transition:border .15s}
+  font-size:14px;background:var(--sup);color:var(--tinta);box-shadow:var(--sombra);outline:none}
 .buscador input:focus{border-color:var(--azul2)}
-
-.panel{background:#fff;margin:12px 16px;padding:16px;border-radius:16px;
-  box-shadow:0 6px 24px rgba(13,59,102,.16);display:none}
-.panel .cerrar{float:right;border:none;background:#eef2f6;border-radius:50%;width:30px;height:30px;
-  font-size:14px;cursor:pointer;color:var(--gris)}
-.panel label{font-size:12px;font-weight:600;display:block;margin:10px 0 4px;color:var(--azul)}
-.panel input{width:100%;padding:10px 12px;border:1.5px solid var(--borde);border-radius:10px;
-  font-size:14px;outline:none}
-.panel input:focus{border-color:var(--azul2)}
-.hint{font-size:11px;color:var(--gris);margin-top:3px;line-height:1.5}
-.botones{display:flex;gap:8px;margin-top:14px}
-.botones button{flex:1;padding:11px;border-radius:11px;border:none;font-size:13px;font-weight:700;cursor:pointer}
-
-.emp{border:1.5px solid var(--borde);border-radius:12px;padding:12px 14px;margin-top:10px;background:#fbfdfe}
-.emp .kw{font-size:11.5px;color:var(--gris);margin:5px 0;line-height:1.5}
-.emp .stats{font-size:12.5px;color:var(--azul);font-weight:700;margin:5px 0}
-.emp .btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.emp .btns button{font-size:11.5px;padding:6px 11px;border-radius:9px;border:1px solid var(--borde);
-  background:#fff;cursor:pointer;font-weight:600}
-
-.embudo{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.etapa{flex:1;min-width:92px;background:linear-gradient(180deg,#f6f9fc,#eef2f6);border-radius:14px;
-  padding:12px 8px;text-align:center;cursor:pointer;border:1.5px solid var(--borde);transition:transform .1s}
-.etapa:active{transform:scale(.96)}
-.etapa b{display:block;font-size:22px;color:var(--azul)}
-.etapa span{font-size:10.5px;color:var(--gris);font-weight:600}
-
 .filtros{display:flex;gap:8px;padding:10px 16px;flex-wrap:wrap;align-items:center;font-size:12px}
 .filtros select{font-size:12px;padding:7px 10px;border-radius:10px;border:1.5px solid var(--borde);
-  background:#fff;max-width:46vw;font-weight:600;color:var(--tinta);box-shadow:var(--sombra)}
+  background:var(--sup);color:var(--tinta);max-width:46vw;font-weight:600;box-shadow:var(--sombra)}
 
-.lista{padding:4px 14px 120px;display:flex;flex-direction:column;gap:12px}
-.card{background:#fff;border-radius:16px;padding:14px 16px;box-shadow:var(--sombra);
+/* ---- lista + tarjetas ---- */
+.lista{padding:4px 14px 30px;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--sup);border-radius:16px;padding:14px 16px;box-shadow:var(--sombra);
   border-left:6px solid #9aa7b2;display:flex;flex-direction:column;gap:7px}
 .card.urgente{border-left-color:#d62828}.card.pronto{border-left-color:#f77f00}.card.holgado{border-left-color:#2a9d8f}
-.card.agil{background:linear-gradient(180deg,#fffdf2,#fff8dd);border:1px solid #eedd9a;border-left:6px solid #eedd9a}
+.card.agil{background:var(--sup-agil);border:1px solid var(--agil-bd);border-left:6px solid var(--agil-bd)}
 .card.agil.urgente{border-left-color:#d62828}.card.agil.pronto{border-left-color:#f77f00}.card.agil.holgado{border-left-color:#2a9d8f}
 .card.e-EVALUANDO{outline:3px solid var(--acento)}
 .card.e-PREPARANDO{outline:3px solid #f77f00}
 .card.e-ENVIADA{outline:3px solid var(--azul)}
-.card.e-GANADA{outline:3px solid #2a9d8f;background:#e9f9f0}
+.card.e-GANADA{outline:3px solid #2a9d8f}
 .card.e-PERDIDA{opacity:.5}
 .card h3{margin:0;font-size:14.5px;line-height:1.4;font-weight:600}
-.card h3 a{color:var(--azul);text-decoration:none}
+.card h3 a{color:var(--enlace);text-decoration:none}
 .badges{display:flex;gap:5px;flex-wrap:wrap}
-.badge{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:10px;background:#e8eef4;color:#33475b}
+.badge{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:10px;background:var(--badge-bg);color:var(--badge-tx)}
 .badge.rojo{background:#d62828;color:#fff}.badge.naranjo{background:#f77f00;color:#fff}
 .badge.verde{background:#2a9d8f;color:#fff}.badge.azul{background:var(--azul);color:#fff}
 .badge.oro{background:var(--acento);color:#4a3800}.badge.agil{background:var(--acento);color:#4a3800}
 .meta{font-size:11.5px;color:var(--gris);line-height:1.5}
-.meta .org{color:var(--azul2);text-decoration:underline dotted;cursor:pointer}
-details{font-size:12px;color:var(--gris);background:#f6f9fc;border-radius:10px;padding:7px 10px}
-.card.agil details{background:rgba(255,255,255,.6)}
-details summary{color:var(--azul);font-weight:700;cursor:pointer}
-details div,details b{line-height:1.55}
+.meta .org{color:var(--enlace);text-decoration:underline dotted;cursor:pointer}
+details{font-size:12px;color:var(--gris);background:var(--sup2);border-radius:10px;padding:7px 10px}
+details summary{color:var(--enlace);font-weight:700;cursor:pointer}
+details b{color:var(--tinta)}
 .acciones{display:flex;gap:6px;flex-wrap:wrap;margin-top:3px;align-items:center}
 .acciones button,.acciones select{font-size:12px;padding:7px 11px;border-radius:10px;
-  border:1px solid var(--borde);background:#fff;cursor:pointer;font-weight:600;color:var(--tinta)}
-.acciones button:active{background:#e8eef4}
-.acciones select.estado{font-weight:700;max-width:150px;color:var(--azul)}
-
-.vacio{text-align:center;color:var(--gris);padding:50px 20px;font-size:14px;line-height:1.7}
-.vacio::before{content:"🔍";display:block;font-size:42px;margin-bottom:8px}
+  border:1px solid var(--borde);background:var(--sup);color:var(--tinta);cursor:pointer;font-weight:600}
+.acciones select.estado{font-weight:700;max-width:150px;color:var(--enlace)}
+.vacio{text-align:center;color:var(--gris);padding:46px 20px;font-size:14px;line-height:1.7}
+.vacio::before{content:"🔍";display:block;font-size:40px;margin-bottom:8px}
 .cargando{text-align:center;color:var(--gris);padding:50px 20px;font-size:13px}
-.cargando::before{content:"📡";display:block;font-size:42px;margin-bottom:10px;
-  animation:pulso 1.2s infinite}
+.cargando::before{content:"📡";display:block;font-size:40px;margin-bottom:10px;animation:pulso 1.2s infinite}
 @keyframes pulso{50%{opacity:.35}}
-.mas{margin:8px auto 0;display:block;background:var(--azul);color:#fff;border:none;
-  border-radius:14px;padding:12px 28px;font-size:13px;font-weight:700;cursor:pointer;
-  box-shadow:0 4px 12px rgba(13,59,102,.3)}
+.mas{margin:8px auto 0;display:block;background:var(--azul);color:#fff;border:none;border-radius:14px;
+  padding:12px 28px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(13,59,102,.3)}
 
-.pie{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.92);
-  backdrop-filter:blur(10px);border-top:1px solid var(--borde);
-  padding:9px 16px calc(9px + env(safe-area-inset-bottom));font-size:11px;color:var(--gris);
-  display:flex;justify-content:space-between;align-items:center;gap:8px}
-.pie .conteo-pill{background:#e8eef4;color:var(--azul);font-weight:700;border-radius:12px;
-  padding:6px 12px;font-size:11.5px;white-space:nowrap}
-.pie button,.pie a{background:var(--azul);color:#fff;border:none;border-radius:10px;padding:8px 12px;
-  font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;cursor:pointer}
-.pie a.suave{background:#e8eef4;color:#33475b}
-#instalar{display:none;background:var(--acento);color:#4a3800}
-.hint-ios{display:none;background:#fff8e1;border-top:1px solid #e6c95c;padding:8px 16px;
-  font-size:12px;color:#5c4400;position:fixed;bottom:48px;left:0;right:0}
-.toast{position:fixed;bottom:95px;left:50%;transform:translateX(-50%);background:#17202a;color:#fff;
-  padding:10px 20px;border-radius:22px;font-size:13px;opacity:0;transition:opacity .3s;
-  pointer-events:none;z-index:50;box-shadow:0 6px 20px rgba(0,0,0,.3);max-width:85vw;text-align:center}
-.toast.ver{opacity:.97}
+/* ---- bloques (empresas, pipeline, mercado, más) ---- */
+.bloque{padding:4px 16px 30px}
+.tarjeta{background:var(--sup);border-radius:16px;padding:16px;box-shadow:var(--sombra);margin-bottom:14px}
+.tarjeta h3{margin:0 0 8px;font-size:15px;color:var(--tinta)}
+.hint{font-size:12px;color:var(--gris);line-height:1.55}
+.emp{border:1.5px solid var(--borde);border-radius:12px;padding:12px 14px;margin-top:10px;background:var(--sup2)}
+.emp .kw{font-size:11.5px;color:var(--gris);margin:5px 0;line-height:1.5}
+.emp .kw b{color:var(--tinta)}
+.emp .stats{font-size:12.5px;color:var(--enlace);font-weight:700;margin:5px 0}
+.emp .btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.emp .btns button{font-size:11.5px;padding:6px 11px;border-radius:9px;border:1px solid var(--borde);
+  background:var(--sup);color:var(--tinta);cursor:pointer;font-weight:600}
+.botones{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.botones button{flex:1;min-width:120px;padding:11px;border-radius:11px;border:none;font-size:13px;font-weight:700;cursor:pointer}
+.btn-azul{background:var(--azul);color:#fff}.btn-gris{background:var(--badge-bg);color:var(--badge-tx)}
+.embudo{display:flex;gap:8px;flex-wrap:wrap}
+.etapa{flex:1;min-width:90px;background:var(--etapa-bg);border-radius:14px;padding:12px 8px;
+  text-align:center;cursor:pointer;border:1.5px solid var(--borde);transition:transform .1s}
+.etapa:active{transform:scale(.96)}
+.etapa b{display:block;font-size:22px;color:var(--enlace)}
+.etapa span{font-size:10.5px;color:var(--gris);font-weight:600}
+.subtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+table.tabla{border-collapse:collapse;width:100%;margin-top:8px;font-size:11.5px}
+table.tabla th{background:var(--azul);color:#fff;padding:6px;text-align:left;font-size:10.5px}
+table.tabla th:first-child{border-radius:8px 0 0 0}table.tabla th:last-child{border-radius:0 8px 0 0}
+table.tabla td{border-bottom:1px solid var(--borde);padding:6px;vertical-align:top;line-height:1.45;color:var(--tinta)}
+.paso{margin-bottom:10px;font-size:13px;line-height:1.6}
+.paso b{color:var(--enlace)}
+.ajuste{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--borde)}
+.ajuste:last-child{border-bottom:none}
+.ajuste b{font-size:14px}.ajuste .d{font-size:11.5px;color:var(--gris)}
+.ajuste button{background:var(--azul);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+.ajuste button.ok{background:#2a9d8f}
+
+/* ---- modal (bottom sheet) ---- */
+.modal{position:fixed;inset:0;background:rgba(8,16,26,.55);z-index:60;display:none;
+  align-items:flex-end;justify-content:center}
+.modal.abierto{display:flex;animation:fade .2s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.hoja{background:var(--sup);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;
+  border-radius:22px 22px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));
+  animation:sube .24s ease}
+@keyframes sube{from{transform:translateY(30px)}to{transform:none}}
+.hoja .cerrar{float:right;border:none;background:var(--badge-bg);border-radius:50%;width:32px;height:32px;
+  font-size:15px;cursor:pointer;color:var(--gris)}
+.hoja h3{margin:0 0 6px;font-size:16px;color:var(--tinta)}
+.hoja label{font-size:12px;font-weight:600;display:block;margin:10px 0 4px;color:var(--enlace)}
+.hoja input{width:100%;padding:10px 12px;border:1.5px solid var(--borde);border-radius:10px;
+  font-size:14px;background:var(--sup);color:var(--tinta);outline:none}
+.hoja input:focus{border-color:var(--azul2)}
+
+/* ---- tabbar inferior ---- */
+.tabbar{position:fixed;bottom:0;left:0;right:0;background:var(--sup);border-top:1px solid var(--borde);
+  display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:40;box-shadow:0 -2px 14px rgba(0,0,0,.07)}
+.tabbar button{flex:1;background:none;border:none;padding:7px 2px 5px;display:flex;flex-direction:column;
+  align-items:center;gap:2px;color:var(--gris);font-size:10px;font-weight:600;cursor:pointer;position:relative}
+.tabbar .ic{font-size:20px;line-height:1}
+.tabbar button.activo{color:var(--enlace)}
+.tabbar button.activo::before{content:"";position:absolute;top:0;width:26px;height:3px;
+  background:var(--enlace);border-radius:0 0 4px 4px}
+.tabbar .punto{position:absolute;top:4px;right:calc(50% - 18px);background:#d62828;color:#fff;
+  font-size:9px;font-weight:800;border-radius:10px;padding:0 5px;min-width:15px;text-align:center}
+
+/* ---- overlay bienvenida ---- */
 .overlay{position:fixed;inset:0;background:linear-gradient(150deg,var(--azul),var(--azul2));color:#fff;
-  z-index:100;display:none;flex-direction:column;justify-content:center;align-items:center;
-  text-align:center;padding:30px}
+  z-index:100;display:none;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:30px}
 .overlay img{width:96px;margin-bottom:16px;border-radius:22px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
-.overlay h2{margin:0 0 8px;font-size:26px;letter-spacing:.5px}
+.overlay h2{margin:0 0 8px;font-size:26px}
 .overlay p{font-size:14px;opacity:.85;max-width:340px;line-height:1.6}
-.overlay button{width:100%;max-width:320px;padding:15px;border:none;border-radius:14px;
-  font-size:15px;font-weight:800;margin-top:12px;cursor:pointer}
-table.precios{border-collapse:collapse;width:100%;margin-top:10px;font-size:11.5px}
-table.precios th{background:var(--azul);color:#fff;padding:6px;text-align:left;font-size:10.5px}
-table.precios th:first-child{border-radius:8px 0 0 0}
-table.precios th:last-child{border-radius:0 8px 0 0}
-table.precios td{border-bottom:1px solid var(--borde);padding:6px;vertical-align:top;line-height:1.45}
+.overlay button{width:100%;max-width:320px;padding:15px;border:none;border-radius:14px;font-size:15px;font-weight:800;margin-top:12px;cursor:pointer}
+
+.toast{position:fixed;bottom:78px;left:50%;transform:translateX(-50%);background:#17202a;color:#fff;
+  padding:10px 20px;border-radius:22px;font-size:13px;opacity:0;transition:opacity .3s;
+  pointer-events:none;z-index:80;box-shadow:0 6px 20px rgba(0,0,0,.3);max-width:85vw;text-align:center}
+.toast.ver{opacity:.97}
 </style>
 </head>
 <body>
+
 <div class="overlay" id="bienvenida">
   <img src="icon-192.png" alt="">
   <h2>Radar MP</h2>
@@ -164,149 +198,160 @@ table.precios td{border-bottom:1px solid var(--borde);padding:6px;vertical-align
   <button style="background:var(--acento);color:#4a3800" onclick="empezar(true)">🏢 Crear el perfil de mi empresa</button>
   <button style="background:rgba(255,255,255,.15);color:#fff" onclick="empezar(false)">Explorar rubros de ejemplo</button>
 </div>
+
 <header>
-  <h1>📡 Radar MP <span class="beta">BETA</span></h1>
+  <div class="h-top">
+    <h1>📡 Radar MP <span class="beta">BETA</span></h1>
+    <button class="h-tema" onclick="toggleTema()" title="Modo claro/oscuro">🌓</button>
+  </div>
   <div class="sub" id="actualizado">cargando datos...</div>
   <div class="aviso-nuevas" id="avisoNuevas" style="display:none"></div>
 </header>
-<div class="chips" id="chips"></div>
-<div id="bannerInstalar" style="display:none;background:linear-gradient(90deg,#fff8dd,#fffbea);
-  border-bottom:1px solid #eedd9a;padding:10px 16px;font-size:13px;color:#4a3800;
-  display:none;align-items:center;gap:10px;justify-content:space-between">
-  <span>📲 <b>Instala Radar MP</b> y tenla como app en tu teléfono</span>
-  <span style="white-space:nowrap">
-    <button onclick="instalarApp()" style="background:#0d3b66;color:#fff;border:none;border-radius:10px;
-      padding:8px 14px;font-size:12.5px;font-weight:700;cursor:pointer">Instalar</button>
-    <button onclick="cerrarBannerInstalar()" style="background:none;border:none;font-size:15px;
-      cursor:pointer;color:#8a7a30">✕</button>
-  </span>
-</div>
 
-<div class="panel" id="formPerfil">
-  <button class="cerrar" onclick="cerrarPaneles()">✕</button>
-  <b style="font-size:15px">🏢 Perfil de mi empresa</b>
-  <div class="hint" style="margin-top:6px">¿No sabes qué palabras poner? Parte de una plantilla y ajústala:</div>
+<main>
+  <!-- ===== OPORTUNIDADES ===== -->
+  <section class="vista activa" id="v-oportunidades">
+    <div class="chips" id="chips"></div>
+    <div class="banner" id="bannerInstalar">
+      <span>📲 <b>Instala Radar MP</b> y tenla como app</span>
+      <span style="white-space:nowrap">
+        <button class="bi" onclick="instalarApp()">Instalar</button>
+        <button class="bx" onclick="cerrarBannerInstalar()">✕</button></span>
+    </div>
+    <div class="buscador"><input id="fTexto" placeholder="🔎 Buscar (ej: guantes, techumbre...)" oninput="renderDesdeCero()"></div>
+    <div class="filtros">
+      <select id="fTipo" onchange="renderDesdeCero()">
+        <option value="todo">Todo</option><option value="agil">⚡ Compra Ágil</option><option value="lic">Licitaciones</option>
+      </select>
+      <select id="fRegion" onchange="renderDesdeCero()"><option value="todas">Todas las regiones</option></select>
+      <select id="fMonto" onchange="renderDesdeCero()">
+        <option value="todos">Cualquier monto</option><option value="chico">Hasta $5M</option>
+        <option value="medio">$5M – $50M</option><option value="grande">Más de $50M</option>
+      </select>
+      <select id="fOrden" onchange="renderDesdeCero()">
+        <option value="cierre">⏱ Por cierre</option><option value="chance">💡 Mejor oportunidad</option><option value="monto">💵 Mayor monto</option>
+      </select>
+      <select id="fVer" onchange="renderDesdeCero()">
+        <option value="activas">Activas</option><option value="nuevas">★ Nuevas</option>
+        <option value="EVALUANDO">🟡 Evaluando</option><option value="PREPARANDO">🟠 Preparando</option>
+        <option value="ENVIADA">🔵 Enviadas</option><option value="GANADA">🟢 Ganadas</option>
+        <option value="PERDIDA">⚪ Perdidas</option><option value="todas">Todas</option>
+      </select>
+    </div>
+    <div class="lista" id="lista"><div class="cargando">Buscando oportunidades en todo Chile…</div></div>
+  </section>
+
+  <!-- ===== EMPRESAS ===== -->
+  <section class="vista" id="v-empresas">
+    <div class="v-titulo">🏢 Mis empresas</div>
+    <div class="v-sub">Crea todas las empresas o combinaciones de palabras que quieras. Cada una busca
+    por separado en todo Chile y queda guardada en este dispositivo.</div>
+    <div class="bloque">
+      <div id="listaEmpresas"></div>
+      <div class="botones">
+        <button class="btn-azul" onclick="abrirForm()">➕ Crear empresa</button>
+        <button class="btn-gris" onclick="exportarEmpresas()">⬆ Exportar</button>
+        <button class="btn-gris" onclick="importarEmpresas()">⬇ Importar</button>
+      </div>
+      <div class="hint" style="margin-top:8px">Exportar copia un código con todas tus empresas para
+      pasarlas a otro teléfono (ahí usas Importar) o como respaldo.</div>
+    </div>
+  </section>
+
+  <!-- ===== PIPELINE ===== -->
+  <section class="vista" id="v-pipeline">
+    <div class="v-titulo">📊 Mi pipeline</div>
+    <div class="v-sub">Tus oportunidades por etapa. Toca una para ver su lista. La etapa se cambia en
+    cada tarjeta con el selector.</div>
+    <div class="bloque">
+      <div class="tarjeta"><h3>Embudo</h3><div class="embudo" id="embudo"></div></div>
+      <div class="tarjeta"><h3>📈 Mis números</h3><div id="contenidoStats"></div></div>
+    </div>
+  </section>
+
+  <!-- ===== MERCADO ===== -->
+  <section class="vista" id="v-mercado">
+    <div class="v-titulo">💰 Precios y competencia</div>
+    <div class="v-sub" id="mercadoContexto"></div>
+    <div class="bloque">
+      <div class="subtabs" id="mercadoTabs"></div>
+      <div class="tarjeta" id="contenidoMercado"></div>
+    </div>
+  </section>
+
+  <!-- ===== MÁS ===== -->
+  <section class="vista" id="v-mas">
+    <div class="v-titulo">☰ Más</div>
+    <div class="bloque">
+      <div class="tarjeta"><h3>❓ Cómo usar Radar MP</h3>
+        <div class="paso"><b>1. Crea tu empresa</b> — pestaña 🏢: elige una plantilla de tu rubro o
+        escribe tus palabras clave. El contador te dice cuánto mercado abre cada combinación.</div>
+        <div class="paso"><b>2. Revisa a diario</b> — los datos se renuevan solos todo el día. El filtro
+        "★ Nuevas" muestra lo que apareció hoy.</div>
+        <div class="paso"><b>3. Tarjetas amarillas ⚡ = Compra Ágil</b> — cotizaciones rápidas sin
+        garantías (cierran en 2-5 días). "Ver ficha", copia el código 📋 y cotiza en mercadopublico.cl.
+        <b>0 ofertas = tu mejor chance.</b></div>
+        <div class="paso"><b>4. Gestiona tu pipeline</b> — marca la etapa en cada tarjeta y míralo en 📊.</div>
+        <div class="paso"><b>5. Cotiza con datos</b> — la pestaña 💰 muestra a qué precios se gana en tu
+        rubro y quién es tu competencia.</div>
+        <div class="paso"><b>6. No pierdas plazos</b> — 🗓 agrega el cierre a tu calendario con alarma;
+        🤖 IA te prepara el análisis.</div>
+      </div>
+      <div class="tarjeta"><h3>Ajustes</h3>
+        <div class="ajuste"><div><b>🌓 Modo oscuro</b><div class="d">Descansa la vista de noche</div></div>
+          <button onclick="toggleTema()" id="btnTema">Cambiar</button></div>
+        <div class="ajuste"><div><b>📲 Instalar app</b><div class="d" id="dInstalar">Tenla con ícono propio</div></div>
+          <button onclick="instalarApp()" id="btnInstalar">Instalar</button></div>
+        <div class="ajuste"><div><b>🔔 Notificaciones</b><div class="d">Aviso al abrir si hay novedades</div></div>
+          <button onclick="pedirNotif()" id="btnNotif">Activar</button></div>
+      </div>
+      <div class="tarjeta"><h3>Radar MP</h3>
+        <div class="hint" style="line-height:2">
+        <a href="terminos.html">📄 Términos y privacidad</a><br>
+        <a href="mailto:gustavoandred15@gmail.com?subject=Sugerencia%20Radar%20MP">💬 Enviar sugerencia</a><br>
+        <a href="#" onclick="compartirApp();return false">↗ Recomendar la app a un colega</a></div>
+        <div class="hint" style="margin-top:10px;font-size:11px">Datos referenciales de Mercado Público.
+        Verifica siempre en mercadopublico.cl antes de ofertar. Versión beta.</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== MODAL: perfil ===== -->
+<div class="modal" id="modalPerfil"><div class="hoja">
+  <button class="cerrar" onclick="cerrarModal('modalPerfil')">✕</button>
+  <h3>🏢 Perfil de mi empresa</h3>
+  <div class="hint">¿No sabes qué palabras poner? Parte de una plantilla y ajústala:</div>
   <div id="plantillas" style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 2px"></div>
   <label>Nombre de la empresa o rubro</label>
   <input id="pNombre" placeholder="Ej: Constructora Los Andes">
   <label>Palabras clave (separadas por coma)</label>
   <input id="pClaves" placeholder="Ej: pintura, impermeabilizacion, fachada" oninput="contarVivo()">
-  <div class="hint">La app buscará estas palabras en TODAS las licitaciones y compras ágiles de Chile, en cada actualización.</div>
+  <div class="hint">Se buscarán en TODAS las licitaciones y compras ágiles de Chile.</div>
   <label>Palabras a excluir (opcional)</label>
   <input id="pExcluir" placeholder="Ej: arriendo, aseo" oninput="contarVivo()">
   <div class="hint" id="contadorVivo" style="margin-top:8px;font-size:12px"></div>
   <div class="botones">
-    <button style="background:var(--azul);color:#fff" onclick="guardarPerfil()">Guardar y buscar</button>
-    <button style="background:#e8eef4" onclick="cerrarPaneles()">Cancelar</button>
+    <button class="btn-azul" onclick="guardarPerfil()">Guardar y buscar</button>
+    <button class="btn-gris" onclick="cerrarModal('modalPerfil')">Cancelar</button>
   </div>
-</div>
+</div></div>
 
-<div class="panel" id="panelEmpresas">
-  <button class="cerrar" onclick="cerrarPaneles()">✕</button>
-  <b style="font-size:16px">🏢 Mis empresas</b>
-  <div class="hint">Crea todas las empresas o combinaciones de palabras que quieras — quedan guardadas
-  en este dispositivo y cada una busca por separado en todo Chile.</div>
-  <div id="listaEmpresas"></div>
-  <div class="botones">
-    <button style="background:var(--azul);color:#fff" onclick="cerrarPaneles();abrirForm()">➕ Crear otra</button>
-    <button style="background:#e8eef4" onclick="exportarEmpresas()">⬆ Exportar</button>
-    <button style="background:#e8eef4" onclick="importarEmpresas()">⬇ Importar</button>
-  </div>
-  <div class="hint">Exportar copia un código con todas tus empresas para pasarlas a otro teléfono
-  (ahí usas Importar) o como respaldo.</div>
-</div>
-
-<div class="panel" id="panelPipeline">
-  <button class="cerrar" onclick="cerrarPaneles()">✕</button>
-  <b style="font-size:16px">📊 Mi pipeline</b>
-  <div class="hint">Tus oportunidades por etapa. Toca una etapa para ver su lista.
-  El estado se cambia en cada tarjeta con el selector "Etapa".</div>
-  <div class="embudo" id="embudo"></div>
-</div>
-
-<div class="panel" id="panelPrecios">
-  <button class="cerrar" onclick="cerrarPaneles()">✕</button>
-  <b style="font-size:16px">💰 Precios y competencia</b>
-  <div id="contenidoPrecios"></div>
-</div>
-
-<div class="panel" id="panelComprador">
-  <button class="cerrar" onclick="cerrarPaneles()">✕</button>
+<!-- ===== MODAL: comprador ===== -->
+<div class="modal" id="modalComprador"><div class="hoja">
+  <button class="cerrar" onclick="cerrarModal('modalComprador')">✕</button>
   <div id="contenidoComprador"></div>
-</div>
+</div></div>
 
-<div class="panel" id="panelStats">
-  <button class="cerrar" onclick="cerrarPaneles()">✕</button>
-  <b style="font-size:16px">📈 Mis números</b>
-  <div id="contenidoStats"></div>
-</div>
+<!-- ===== tabbar ===== -->
+<nav class="tabbar" id="tabbar">
+  <button data-v="oportunidades" class="activo" onclick="irA('oportunidades')"><span class="ic">🔍</span>Oportunidades</button>
+  <button data-v="empresas" onclick="irA('empresas')"><span class="ic">🏢</span>Empresas</button>
+  <button data-v="pipeline" onclick="irA('pipeline')"><span class="ic">📊</span>Pipeline</button>
+  <button data-v="mercado" onclick="irA('mercado')"><span class="ic">💰</span>Mercado</button>
+  <button data-v="mas" onclick="irA('mas')"><span class="ic">☰</span>Más</button>
+</nav>
 
-<div class="panel" id="panelAyuda">
-  <button class="cerrar" onclick="cerrarPaneles()">✕</button>
-  <b style="font-size:16px">❓ Cómo usar Radar MP</b>
-  <div class="hint" style="font-size:12.5px;line-height:1.9;margin-top:10px">
-  <b>1. Crea tu empresa</b> — chip "➕ Mi empresa": elige una plantilla de tu rubro o escribe tus
-  palabras clave. El contador te dice cuánto mercado abre cada combinación.<br>
-  <b>2. Revisa a diario</b> — los datos se renuevan solos durante todo el día. El filtro
-  "★ Nuevas" muestra lo que apareció hoy.<br>
-  <b>3. Las tarjetas amarillas ⚡ son Compra Ágil</b> — cotizaciones rápidas sin garantías que
-  cierran en 2-5 días. Mira "Ver ficha", copia el código con 📋 y cotiza en mercadopublico.cl
-  con tu cuenta de proveedor. La que dice <b>0 ofertas</b> es tu mejor chance.<br>
-  <b>4. Gestiona tu pipeline</b> — en cada tarjeta marca la etapa (Evaluando → Enviada →
-  Ganada/Perdida). El botón 📊 te muestra el embudo y 📈 tus números.<br>
-  <b>5. Cotiza con datos</b> — el botón 💰 muestra a qué precios se está ganando en tu rubro y
-  quién es tu competencia.<br>
-  <b>6. No pierdas plazos</b> — el botón 🗓 de cada tarjeta agrega el cierre a tu calendario
-  con alarma. Y 🤖 IA te prepara el análisis de la oportunidad.</div>
-  <div class="botones">
-    <button style="background:#e8eef4" onclick="toggleTema()">🌓 Modo oscuro/claro</button>
-    <button style="background:#e8eef4" onclick="instalarApp()">📲 Instalar app</button>
-  </div>
-  <div class="hint" style="margin-top:10px">
-  <a href="terminos.html">Términos y privacidad</a> ·
-  <a href="mailto:gustavoandred15@gmail.com?subject=Sugerencia%20Radar%20MP">Enviar sugerencia</a></div>
-</div>
-
-<div class="buscador"><input id="fTexto" placeholder="🔎 Buscar por texto libre (ej: guantes, techumbre...)" oninput="renderDesdeCero()"></div>
-<div class="filtros">
-  <select id="fTipo" onchange="renderDesdeCero()">
-    <option value="todo">Todo</option>
-    <option value="agil">⚡ Compra Ágil</option>
-    <option value="lic">Licitaciones</option>
-  </select>
-  <select id="fRegion" onchange="renderDesdeCero()"><option value="todas">Todas las regiones</option></select>
-  <select id="fMonto" onchange="renderDesdeCero()">
-    <option value="todos">Cualquier monto</option>
-    <option value="chico">Hasta $5M</option>
-    <option value="medio">$5M – $50M</option>
-    <option value="grande">Más de $50M</option>
-  </select>
-  <select id="fOrden" onchange="renderDesdeCero()">
-    <option value="cierre">⏱ Por cierre</option>
-    <option value="chance">💡 Mejor oportunidad</option>
-    <option value="monto">💵 Mayor monto</option>
-  </select>
-  <select id="fVer" onchange="renderDesdeCero()">
-    <option value="activas">Activas</option>
-    <option value="nuevas">★ Nuevas</option>
-    <option value="EVALUANDO">🟡 Evaluando</option>
-    <option value="PREPARANDO">🟠 Preparando</option>
-    <option value="ENVIADA">🔵 Enviadas</option>
-    <option value="GANADA">🟢 Ganadas</option>
-    <option value="PERDIDA">⚪ Perdidas</option>
-    <option value="todas">Todas</option>
-  </select>
-</div>
-<div class="lista" id="lista"><div class="cargando">Buscando oportunidades en todo Chile…</div></div>
-<div class="hint-ios" id="hintIos">📲 En iPhone: toca <b>Compartir</b> y luego <b>"Añadir a pantalla de inicio"</b> para instalar la app.</div>
-<div class="pie">
-  <span class="conteo-pill" id="conteo">—</span>
-  <button onclick="abrirPipeline()" title="Mi pipeline">📊</button>
-  <button id="btnPrecios" onclick="abrirPrecios()" title="Precios y competencia">💰</button>
-  <button onclick="abrirStats()" title="Mis números">📈</button>
-  <button onclick="abrirPanel('panelAyuda')" title="Ayuda" style="background:#e8eef4;color:#33475b">❓</button>
-  <button id="instalar">📲 Instalar</button>
-</div>
 <div class="toast" id="toast"></div>
 <script src="app.js"></script>
 </body>
